@@ -7,12 +7,13 @@ use App\Models\Gallery;
 
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BlogController;
-
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Models\Setting;
+use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
@@ -60,10 +61,12 @@ Route::get('/blog', [BlogController::class, 'index'])
 Route::get('/blog/{slug}', [BlogController::class, 'show'])
     ->name('blog.show');
 
-Route::get('/contact', function () {
-    return view('pages.home');
-})->name('contact');
+Route::get('/contact', [ContactController::class, 'index'])
+    ->name('contact');
 
+Route::post('/contact', [ContactController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('contact.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -203,6 +206,22 @@ Route::middleware('admin')->group(function () {
     Route::delete('/admin/blog/{blog}', [AdminBlogController::class, 'destroy'])
         ->name('admin.blog.destroy');
 
+
+
+// Contact Messages
+Route::get('/contact-messages', [ContactMessageController::class, 'index'])
+    ->name('admin.contact-messages.index');
+
+Route::get('/contact-messages/{contactMessage}', [ContactMessageController::class, 'show'])
+    ->name('admin.contact-messages.show');
+
+Route::put('/contact-messages/{contactMessage}', [ContactMessageController::class, 'update'])
+    ->name('admin.contact-messages.update');
+
+Route::delete('/contact-messages/{contactMessage}', [ContactMessageController::class, 'destroy'])
+    ->name('admin.contact-messages.destroy');
+
+    
 
 // Website Settings
 Route::get('/admin/settings', [SettingController::class, 'index'])

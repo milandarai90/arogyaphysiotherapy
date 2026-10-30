@@ -130,6 +130,12 @@
     <i class="fas fa-newspaper me-2"></i> Blog Management
 </a>
 
+<a href="{{ route('admin.contact-messages.index') }}"
+   class="btn btn-outline-primary">
+    <i class="fas fa-envelope me-2"></i>
+    Contact Messages
+</a>
+
          <a href="{{ route('admin.settings.index') }}"
    class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
     <i class="fas fa-cog me-2"></i>
