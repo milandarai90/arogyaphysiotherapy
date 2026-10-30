@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
 
@@ -193,4 +194,11 @@ Route::middleware('admin')->group(function () {
     Route::delete('/admin/blog/{blog}', [AdminBlogController::class, 'destroy'])
         ->name('admin.blog.destroy');
 
+
+// Website Settings
+Route::get('/admin/settings', [SettingController::class, 'index'])
+    ->name('admin.settings.index');
+
+Route::put('/admin/settings', [SettingController::class, 'update'])
+    ->name('admin.settings.update');
 });

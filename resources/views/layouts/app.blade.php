@@ -1,15 +1,44 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>@yield('title', 'Arogya Physiotherapy Center')</title>
+  @php
+    $defaultSeoTitle = 'Arogya Physiotherapy Center | Physiotherapy in Bhandara, Nepal';
 
-    <meta name="description"
-          content="@yield('description', 'Arogya Physiotherapy Center, Bhandara. Personalized physiotherapy, rehabilitation and healthcare services.')">
+    $defaultSeoDescription = 'Arogya Physiotherapy Center in Bhandara, Nepal, provides professional physiotherapy care, pain management and rehabilitation services.';
 
-    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    $seoTitle = $siteSettings->get('seo_title')?->value ?: $defaultSeoTitle;
+
+    $seoDescription = $siteSettings->get('seo_description')?->value ?: $defaultSeoDescription;
+@endphp
+
+<title>@yield('title', $seoTitle)</title>
+
+<meta name="description"
+      content="@yield('description', $seoDescription)">
+
+<meta name="robots" content="index, follow">
+    @php
+        $logoPath = $siteSettings->get('logo')?->value;
+        $clinicName = $siteSettings->get('clinic_name')?->value ?? 'Arogya Physiotherapy Center';
+
+        $socialLinks = [
+            'facebook' => ['Facebook', 'fa-brands fa-facebook-f'],
+            'instagram' => ['Instagram', 'fa-brands fa-instagram'],
+            'tiktok' => ['TikTok', 'fa-brands fa-tiktok'],
+            'youtube' => ['YouTube', 'fa-brands fa-youtube'],
+            'linkedin' => ['LinkedIn', 'fa-brands fa-linkedin-in'],
+            'twitter' => ['X (Twitter)', 'fa-brands fa-x-twitter'],
+            'threads' => ['Threads', 'fa-brands fa-threads'],
+            'viber' => ['Viber', 'fa-brands fa-viber'],
+        ];
+    @endphp
+
+    <link rel="icon" type="image/png"
+          href="{{ $logoPath ? asset('storage/' . $logoPath) : asset('images/logo.png') }}">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
@@ -37,18 +66,38 @@
                 <div class="d-flex flex-wrap gap-3">
                     <span>
                         <i class="fas fa-location-dot"></i>
-                        Mahendra Hwy, Bhandara
+                        {{ $siteSettings->get('address')?->value ?? 'Mahendra Hwy, Bhandara' }}
                     </span>
 
-                    <span>
-                        <i class="fas fa-envelope"></i>
-                        Contact information coming soon
-                    </span>
+                    @if($siteSettings->get('email')?->value)
+                        <span>
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:{{ $siteSettings->get('email')->value }}">
+                                {{ $siteSettings->get('email')->value }}
+                            </a>
+                        </span>
+                    @endif
                 </div>
 
                 <div class="social-links">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    @foreach($socialLinks as $key => $social)
+                        @php
+                            $socialUrl = $siteSettings->get($key)?->value;
+
+                            if ($key === 'viber' && $socialUrl && !str_starts_with($socialUrl, 'http')) {
+                                $socialUrl = 'viber://chat?number=' . preg_replace('/\D+/', '', $socialUrl);
+                            }
+                        @endphp
+
+                        @if($socialUrl)
+                            <a href="{{ $socialUrl }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               aria-label="{{ $social[0] }}">
+                                <i class="{{ $social[1] }}"></i>
+                            </a>
+                        @endif
+                    @endforeach
                 </div>
 
             </div>
@@ -62,8 +111,8 @@
             <a class="navbar-brand d-flex align-items-center gap-2"
                href="{{ route('home') }}">
 
-                <img src="{{ asset('images/logo.png') }}"
-                     alt="Arogya Physiotherapy Center Logo"
+                <img src="{{ $logoPath ? asset('storage/' . $logoPath) : asset('images/logo.png') }}"
+                     alt="{{ $clinicName }} Logo"
                      class="brand-logo">
 
                 <div class="brand-text">
@@ -141,7 +190,7 @@
                         Need physiotherapy assistance?
                     </h5>
                     <p class="mb-0">
-                        Get in touch with Arogya Physiotherapy Center.
+                        Get in touch with {{ $clinicName }}.
                     </p>
                 </div>
 
@@ -163,20 +212,40 @@
                 <div class="col-lg-4 col-md-6">
 
                     <div class="footer-brand d-flex align-items-center gap-2 mb-3">
-                        <img src="{{ asset('images/logo.png') }}"
-                             alt="Arogya Logo">
+                        <img src="{{ $logoPath ? asset('storage/' . $logoPath) : asset('images/logo.png') }}"
+                             alt="{{ $clinicName }} Logo">
 
                         <div>
-                            <h5>AROGYA</h5>
+                            <h5>{{ $clinicName }}</h5>
                             <small>PHYSIOTHERAPY CENTER</small>
                         </div>
                     </div>
 
                     <p>
-                        Helping people move better, recover stronger
-                        and live healthier through personalized
-                        physiotherapy and rehabilitation care.
+                        {{ $siteSettings->get('footer_text')?->value
+                            ?? 'Helping people move better, recover stronger and live healthier through personalized physiotherapy and rehabilitation care.' }}
                     </p>
+
+                    <div class="social-links footer-social-links">
+                        @foreach($socialLinks as $key => $social)
+                            @php
+                                $socialUrl = $siteSettings->get($key)?->value;
+
+                                if ($key === 'viber' && $socialUrl && !str_starts_with($socialUrl, 'http')) {
+                                    $socialUrl = 'viber://chat?number=' . preg_replace('/\D+/', '', $socialUrl);
+                                }
+                            @endphp
+
+                            @if($socialUrl)
+                                <a href="{{ $socialUrl }}"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   aria-label="{{ $social[0] }}">
+                                    <i class="{{ $social[1] }}"></i>
+                                </a>
+                            @endif
+                        @endforeach
+                    </div>
 
                 </div>
 
@@ -190,6 +259,7 @@
                         <li><a href="{{ route('services') }}">Services</a></li>
                         <li><a href="{{ route('gallery') }}">Gallery</a></li>
                         <li><a href="{{ route('blog') }}">Blog</a></li>
+                        <li><a href="{{ route('contact') }}">Contact</a></li>
                     </ul>
 
                 </div>
@@ -214,17 +284,41 @@
 
                     <p>
                         <i class="fas fa-location-dot me-2"></i>
-                        Mahendra Hwy, Bhandara, Bagmati Province 44202
+                        {{ $siteSettings->get('address')?->value ?? 'Mahendra Hwy, Bhandara, Bagmati Province 44202' }}
                     </p>
 
-                    <p>
-                        <i class="fas fa-phone me-2"></i>
-                        Phone number coming soon
-                    </p>
+                    @if($siteSettings->get('phone')?->value)
+                        <p>
+                            <i class="fas fa-phone me-2"></i>
+                            <a href="tel:{{ $siteSettings->get('phone')->value }}">
+                                {{ $siteSettings->get('phone')->value }}
+                            </a>
+                        </p>
+                    @endif
+
+                    @if($siteSettings->get('email')?->value)
+                        <p>
+                            <i class="fas fa-envelope me-2"></i>
+                            <a href="mailto:{{ $siteSettings->get('email')->value }}">
+                                {{ $siteSettings->get('email')->value }}
+                            </a>
+                        </p>
+                    @endif
+
+                    @if($siteSettings->get('whatsapp')?->value)
+                        <p>
+                            <i class="fab fa-whatsapp me-2"></i>
+                            <a href="https://wa.me/{{ preg_replace('/\D+/', '', $siteSettings->get('whatsapp')->value) }}"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                WhatsApp
+                            </a>
+                        </p>
+                    @endif
 
                     <p>
                         <i class="fas fa-clock me-2"></i>
-                        Opening hours coming soon
+                        {{ $siteSettings->get('opening_hours')?->value ?? 'Opening hours coming soon' }}
                     </p>
 
                 </div>
@@ -237,7 +331,7 @@
                         flex-md-row justify-content-between gap-2">
 
                 <p class="mb-0">
-                    © {{ date('Y') }} Arogya Physiotherapy Center.
+                    © {{ date('Y') }} {{ $clinicName }}.
                     All Rights Reserved.
                 </p>
 

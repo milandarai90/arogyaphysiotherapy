@@ -1,0 +1,202 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Setting;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
+class SettingController extends Controller
+{
+    public function index()
+    {
+        $settings = Setting::all()->keyBy('key');
+
+        return view('admin.settings.index', compact('settings'));
+    }
+
+    public function update(Request $request)
+    {
+        $validated = $request->validate([
+
+            // Clinic information
+            'clinic_name' => ['required', 'string', 'max:255'],
+
+            // Contact information
+            'phone' => ['nullable', 'string', 'max:30'],
+            'whatsapp' => ['nullable', 'string', 'max:30'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'address' => ['nullable', 'string', 'max:500'],
+            'opening_hours' => ['nullable', 'string', 'max:500'],
+
+            // Social media
+            'facebook' => ['nullable', 'url', 'max:255'],
+            'instagram' => ['nullable', 'url', 'max:255'],
+            'tiktok' => ['nullable', 'url', 'max:255'],
+            'youtube' => ['nullable', 'url', 'max:255'],
+            'linkedin' => ['nullable', 'url', 'max:255'],
+            'twitter' => ['nullable', 'url', 'max:255'],
+            'threads' => ['nullable', 'url', 'max:255'],
+            'viber' => ['nullable', 'string', 'max:100'],
+
+            // Homepage SEO
+            'seo_title' => ['nullable', 'string', 'max:255'],
+            'seo_description' => ['nullable', 'string', 'max:500'],
+
+            // Homepage hero section
+            'homepage_heading' => ['nullable', 'string', 'max:255'],
+            'homepage_intro' => ['nullable', 'string', 'max:2000'],
+
+            // About section
+            'about_heading' => ['nullable', 'string', 'max:255'],
+            'about_paragraph_1' => ['nullable', 'string', 'max:2000'],
+            'about_paragraph_2' => ['nullable', 'string', 'max:2000'],
+
+            // Why Choose Us section
+            'why_heading' => ['nullable', 'string', 'max:255'],
+            'why_intro' => ['nullable', 'string', 'max:2000'],
+
+            'why_item_1_title' => ['nullable', 'string', 'max:255'],
+            'why_item_1_description' => ['nullable', 'string', 'max:1000'],
+
+            'why_item_2_title' => ['nullable', 'string', 'max:255'],
+            'why_item_2_description' => ['nullable', 'string', 'max:1000'],
+
+            'why_item_3_title' => ['nullable', 'string', 'max:255'],
+            'why_item_3_description' => ['nullable', 'string', 'max:1000'],
+
+            // Homepage section headings
+            'services_heading' => ['nullable', 'string', 'max:255'],
+            'gallery_heading' => ['nullable', 'string', 'max:255'],
+            'blog_heading' => ['nullable', 'string', 'max:255'],
+
+            // Appointment CTA section
+            'appointment_cta_heading' => ['nullable', 'string', 'max:255'],
+            'appointment_cta_description' => ['nullable', 'string', 'max:1000'],
+            'appointment_cta_button' => ['nullable', 'string', 'max:100'],
+
+            // Footer
+            'footer_text' => ['nullable', 'string', 'max:1000'],
+
+            // Logo
+            'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+
+            // Homepage images
+            'hero_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'about_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'why_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+        ]);
+
+        // Save normal text settings
+        $imageFields = [
+            'logo',
+            'hero_image',
+            'about_image',
+            'why_image',
+        ];
+
+        foreach ($imageFields as $field) {
+            unset($validated[$field]);
+        }
+
+        foreach ($validated as $key => $value) {
+            Setting::updateOrCreate(
+                ['key' => $key],
+                [
+                    'value' => $value,
+                    'group' => $this->settingGroup($key),
+                ]
+            );
+        }
+
+        // Handle image uploads
+        $imageGroups = [
+            'logo' => 'general',
+            'hero_image' => 'homepage',
+            'about_image' => 'about',
+            'why_image' => 'why_choose_us',
+        ];
+
+        foreach ($imageGroups as $field => $group) {
+            if (!$request->hasFile($field)) {
+                continue;
+            }
+
+            $oldImage = Setting::where('key', $field)->value('value');
+
+            $newPath = $request->file($field)->store('settings', 'public');
+
+            Setting::updateOrCreate(
+                ['key' => $field],
+                [
+                    'value' => $newPath,
+                    'group' => $group,
+                ]
+            );
+
+            if ($oldImage) {
+                Storage::disk('public')->delete($oldImage);
+            }
+        }
+
+        return redirect()
+            ->route('admin.settings.index')
+            ->with('success', 'Website settings updated successfully.');
+    }
+
+    private function settingGroup(string $key): string
+    {
+        return match (true) {
+
+            in_array($key, [
+                'phone',
+                'whatsapp',
+                'email',
+                'address',
+                'opening_hours',
+            ]) => 'contact',
+
+            in_array($key, [
+                'facebook',
+                'instagram',
+                'tiktok',
+                'youtube',
+                'linkedin',
+                'twitter',
+                'threads',
+                'viber',
+            ]) => 'social',
+
+            in_array($key, [
+                'seo_title',
+                'seo_description',
+            ]) => 'seo',
+
+            in_array($key, [
+                'homepage_heading',
+                'homepage_intro',
+                'hero_image',
+                'services_heading',
+                'gallery_heading',
+                'blog_heading',
+                'appointment_cta_heading',
+                'appointment_cta_description',
+                'appointment_cta_button',
+            ]) => 'homepage',
+
+            in_array($key, [
+                'about_heading',
+                'about_paragraph_1',
+                'about_paragraph_2',
+                'about_image',
+            ]) => 'about',
+
+            str_starts_with($key, 'why_') => 'why_choose_us',
+
+            $key === 'footer_text' => 'footer',
+
+            default => 'general',
+        };
+    }
+}
