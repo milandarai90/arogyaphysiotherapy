@@ -9,7 +9,12 @@
     <style>
         body { background: #f4f6fb; font-family: Arial, sans-serif; }
         .gallery-card { border: 0; border-radius: 12px; overflow: hidden; }
-        .gallery-image { width: 100%; height: 190px; object-fit: cover; }
+        .gallery-image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
     </style>
 </head>
 <body>

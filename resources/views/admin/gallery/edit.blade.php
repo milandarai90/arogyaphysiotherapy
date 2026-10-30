@@ -9,7 +9,15 @@
     <style>
         body { background: #f4f6fb; font-family: Arial, sans-serif; }
         .page-card { border: 0; border-radius: 12px; }
-        .preview { max-width: 100%; width: 320px; height: 210px; object-fit: cover; border-radius: 10px; }
+        .preview {
+    display: block;
+    max-width: 100%;
+    max-height: 450px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 10px;
+}
     </style>
 </head>
 <body>

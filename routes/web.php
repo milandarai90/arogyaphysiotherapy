@@ -5,6 +5,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ServiceController;   
+use App\Models\Gallery;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
 
@@ -21,7 +22,12 @@ Route::get('/services', function () {
 })->name('services');
 
 Route::get('/gallery', function () {
-    return view('pages.home');
+    $galleries = Gallery::where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderByDesc('created_at')
+        ->get();
+
+    return view('pages.gallery', compact('galleries'));
 })->name('gallery');
 
 Route::get('/blog', function () {
@@ -104,7 +110,7 @@ Route::patch('/admin/services/{service}/toggle-status', [ServiceController::clas
 Route::delete('/admin/services/{service}', [ServiceController::class, 'destroy'])
     ->name('admin.services.destroy');
 
-    
+
 
     // Gallery Management
 Route::get('/admin/gallery', [GalleryController::class, 'index'])
