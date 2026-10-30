@@ -7,12 +7,15 @@ use App\Models\Gallery;
 
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Models\Setting;
+use App\Http\Controllers\Admin\OperatingHourController;
+use App\Http\Controllers\Admin\TherapistController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
@@ -26,15 +29,80 @@ use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentControll
 */
 
 Route::get('/', function () {
-    return view('pages.home');
+    $siteSettings = \App\Models\Setting::all()->keyBy('key');
+
+    // Services
+    $homeServices = \App\Models\Service::where('is_active', true)
+        ->orderBy('name')
+        ->take(6)
+        ->get();
+
+    // Gallery
+    $homeGallery = \App\Models\Gallery::where('is_active', true)
+        ->orderBy('sort_order')
+        ->latest()
+        ->take(6)
+        ->get();
+
+    // Published blog posts
+    $homeBlogs = \App\Models\Blog::where('is_published', true)
+        ->where(function ($query) {
+            $query->whereNull('published_at')
+                ->orWhere('published_at', '<=', now());
+        })
+        ->latest('published_at')
+        ->take(3)
+        ->get();
+
+    // Therapists
+    $therapists = \App\Models\Therapist::where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderBy('name')
+        ->get();
+
+    // Testimonials
+    $testimonials = \App\Models\Testimonial::where('is_active', true)
+        ->orderBy('sort_order')
+        ->latest()
+        ->take(6)
+        ->get();
+
+    // Weekly operating hours
+    $operatingHours = \App\Models\OperatingHour::orderByRaw("
+        FIELD(day_of_week, 'Monday', 'Tuesday', 'Wednesday',
+        'Thursday', 'Friday', 'Saturday', 'Sunday')
+    ")->get();
+
+    // Upcoming holidays
+    $upcomingHolidays = \App\Models\Holiday::whereDate(
+        'holiday_date', '>=', today()
+    )->orderBy('holiday_date')
+        ->take(5)
+        ->get();
+
+    return view('pages.home', compact(
+        'siteSettings',
+        'homeServices',
+        'homeGallery',
+        'homeBlogs',
+        'therapists',
+        'testimonials',
+        'operatingHours',
+        'upcomingHolidays'
+    ));
 })->name('home');
+
 
 Route::get('/about', function () {
     $siteSettings = Setting::all()->keyBy('key');
 
-    return view('pages.about', compact('siteSettings'));
-})->name('about');
+    $therapists = \App\Models\Therapist::where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderBy('name')
+        ->get();
 
+    return view('pages.about', compact('siteSettings', 'therapists'));
+})->name('about');
 Route::get('/services', function () {
     $siteSettings = \App\Models\Setting::all()->keyBy('key');
 
@@ -61,8 +129,24 @@ Route::get('/blog', [BlogController::class, 'index'])
 Route::get('/blog/{slug}', [BlogController::class, 'show'])
     ->name('blog.show');
 
-Route::get('/contact', [ContactController::class, 'index'])
-    ->name('contact');
+Route::get('/contact', function () {
+    $siteSettings = \App\Models\Setting::all()->keyBy('key');
+
+    $operatingHours = \App\Models\OperatingHour::orderByRaw("
+        FIELD(day_of_week, 'Monday', 'Tuesday', 'Wednesday',
+        'Thursday', 'Friday', 'Saturday', 'Sunday')
+    ")->get();
+
+    $upcomingHolidays = \App\Models\Holiday::whereDate(
+        'holiday_date', '>=', today()
+    )->orderBy('holiday_date')->get();
+
+    return view('pages.contact', compact(
+        'siteSettings',
+        'operatingHours',
+        'upcomingHolidays'
+    ));
+})->name('contact');
 
 Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:5,1')
@@ -221,7 +305,68 @@ Route::put('/contact-messages/{contactMessage}', [ContactMessageController::clas
 Route::delete('/contact-messages/{contactMessage}', [ContactMessageController::class, 'destroy'])
     ->name('admin.contact-messages.destroy');
 
-    
+
+    // therapist Management
+
+    Route::get('/therapists', [TherapistController::class, 'index'])
+    ->name('admin.therapists.index');
+
+Route::get('/therapists/create', [TherapistController::class, 'create'])
+    ->name('admin.therapists.create');
+
+Route::post('/therapists', [TherapistController::class, 'store'])
+    ->name('admin.therapists.store');
+
+Route::get('/therapists/{therapist}/edit', [TherapistController::class, 'edit'])
+    ->name('admin.therapists.edit');
+
+Route::put('/therapists/{therapist}', [TherapistController::class, 'update'])
+    ->name('admin.therapists.update');
+
+Route::patch('/therapists/{therapist}/toggle-status', [TherapistController::class, 'toggleStatus'])
+    ->name('admin.therapists.toggle');
+
+Route::delete('/therapists/{therapist}', [TherapistController::class, 'destroy'])
+    ->name('admin.therapists.destroy');
+
+// testimonial management
+
+    Route::get('/testimonials', [TestimonialController::class, 'index'])
+    ->name('admin.testimonials.index');
+
+Route::get('/testimonials/create', [TestimonialController::class, 'create'])
+    ->name('admin.testimonials.create');
+
+Route::post('/testimonials', [TestimonialController::class, 'store'])
+    ->name('admin.testimonials.store');
+
+Route::get('/testimonials/{testimonial}/edit', [TestimonialController::class, 'edit'])
+    ->name('admin.testimonials.edit');
+
+Route::put('/testimonials/{testimonial}', [TestimonialController::class, 'update'])
+    ->name('admin.testimonials.update');
+
+Route::patch('/testimonials/{testimonial}/toggle-status', [TestimonialController::class, 'toggleStatus'])
+    ->name('admin.testimonials.toggle');
+
+Route::delete('/testimonials/{testimonial}', [TestimonialController::class, 'destroy'])
+    ->name('admin.testimonials.destroy');
+
+
+    // Operating Hours Management
+    Route::get('/operating-hours', [OperatingHourController::class, 'index'])
+    ->name('admin.operating-hours.index');
+
+Route::put('/operating-hours', [OperatingHourController::class, 'updateHours'])
+    ->name('admin.operating-hours.update');
+
+Route::post('/holidays', [OperatingHourController::class, 'storeHoliday'])
+    ->name('admin.holidays.store');
+
+Route::delete('/holidays/{holiday}', [OperatingHourController::class, 'destroyHoliday'])
+    ->name('admin.holidays.destroy');
+
+
 
 // Website Settings
 Route::get('/admin/settings', [SettingController::class, 'index'])

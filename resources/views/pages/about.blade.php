@@ -133,4 +133,82 @@
     </div>
 </section>
 
+{{-- Our Team Section --}}
+@if(isset($therapists) && $therapists->count())
+<section class="py-5">
+    <div class="container">
+
+        <div class="text-center mb-5">
+            <span class="text-primary fw-semibold text-uppercase">Meet Our Experts</span>
+            <h2 class="fw-bold mt-2">Our Therapists & Team</h2>
+            <p class="text-muted">
+                Dedicated professionals committed to helping you move better and live healthier.
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+
+            @foreach($therapists as $therapist)
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100 text-center overflow-hidden">
+
+                        @if($therapist->photo)
+                            <img
+                                src="{{ asset('storage/'.$therapist->photo) }}"
+                                alt="{{ $therapist->name }}"
+                                class="w-100"
+                                style="height:280px; object-fit:cover;"
+                            >
+                        @else
+                            <div class="bg-light d-flex align-items-center justify-content-center"
+                                 style="height:280px;">
+                                <i class="fas fa-user-md fa-5x text-secondary"></i>
+                            </div>
+                        @endif
+
+                        <div class="card-body p-4">
+
+                            <h5 class="fw-bold mb-1">{{ $therapist->name }}</h5>
+
+                            @if($therapist->designation)
+                                <div class="text-primary fw-semibold mb-2">
+                                    {{ $therapist->designation }}
+                                </div>
+                            @endif
+
+                            @if($therapist->qualification)
+                                <p class="text-muted small mb-2">
+                                    {{ $therapist->qualification }}
+                                </p>
+                            @endif
+
+                            @if($therapist->specialization)
+                                <p class="mb-2">
+                                    <strong>Specialization:</strong>
+                                    {{ $therapist->specialization }}
+                                </p>
+                            @endif
+
+                            @if($therapist->experience_years > 0)
+                                <p class="text-muted small mb-2">
+                                    {{ $therapist->experience_years }} years of experience
+                                </p>
+                            @endif
+
+                            @if($therapist->bio)
+                                <p class="text-muted small mb-0">
+                                    {{ $therapist->bio }}
+                                </p>
+                            @endif
+
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+        </div>
+    </div>
+</section>
+@endif
+
 @endsection

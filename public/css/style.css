@@ -728,4 +728,52 @@ img {
     .footer-bottom {
         text-align: center;
     }
+
+    .operating-hours-section .card {
+    border-radius: 14px;
+}
+
+.operating-hours-section .border-bottom:last-child {
+    border-bottom: 0 !important;
+}
+
+.operating-hours-section .badge {
+    font-weight: 600;
+}
+
+/* Emergency Contact Section */
+.emergency-contact-card {
+    background: #fff5f5;
+    border: 1px solid #f5caca;
+    border-left: 5px solid #d62828;
+    border-radius: 14px;
+    padding: 25px 30px;
+}
+
+.emergency-contact-icon {
+    width: 55px;
+    height: 55px;
+    min-width: 55px;
+    border-radius: 50%;
+    background: #d62828;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.emergency-contact-card h5 {
+    color: #b71c1c;
+}
+
+@media (max-width: 576px) {
+    .emergency-contact-card {
+        padding: 20px;
+    }
+
+    .emergency-contact-card .btn {
+        width: 100%;
+    }
+}
 }

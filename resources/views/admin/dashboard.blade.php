@@ -136,6 +136,22 @@
     Contact Messages
 </a>
 
+<a href="{{ route('admin.therapists.index') }}"
+   class="btn btn-outline-primary">
+    <i class="fas fa-user-md me-2"></i>
+    Therapists & Staff
+</a>
+
+<a href="{{ route('admin.testimonials.index') }}"
+   class="btn btn-outline-primary">
+    <i class="fas fa-star me-2"></i>Patient Testimonials
+</a>
+
+<a href="{{ route('admin.operating-hours.index') }}"
+   class="btn btn-outline-primary">
+    <i class="fas fa-clock me-2"></i>Operating Hours & Holidays
+</a>
+
          <a href="{{ route('admin.settings.index') }}"
    class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
     <i class="fas fa-cog me-2"></i>

@@ -26,6 +26,9 @@ class SettingController extends Controller
             // Contact information
             'phone' => ['nullable', 'string', 'max:30'],
             'whatsapp' => ['nullable', 'string', 'max:30'],
+            'emergency_phone' => ['nullable', 'string', 'max:30'],
+            'emergency_label' => ['nullable', 'string', 'max:100'],
+            'emergency_instructions' => ['nullable', 'string', 'max:500'],
             'email' => ['nullable', 'email', 'max:255'],
             'address' => ['nullable', 'string', 'max:500'],
             'opening_hours' => ['nullable', 'string', 'max:500'],
@@ -161,8 +164,16 @@ class SettingController extends Controller
         return match (true) {
 
             in_array($key, [
-                'phone', 'whatsapp', 'email', 'address', 'opening_hours',
-                'contact_page_title', 'contact_page_intro',
+                'phone',
+                'whatsapp',
+                'emergency_phone',
+                'emergency_label',
+                'emergency_instructions',
+                'email',
+                'address',
+                'opening_hours',
+                'contact_page_title',
+                'contact_page_intro',
                 'contact_form_heading',
             ]) => 'contact',
 

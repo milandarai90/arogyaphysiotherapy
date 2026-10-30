@@ -334,6 +334,35 @@
                                value="{{ $getSetting('phone') }}">
                     </div>
 
+                    <!-- Emergency Contact -->
+<div class="col-md-6 mb-3">
+    <label class="form-label">Emergency Contact Number</label>
+    <input type="text"
+           name="emergency_phone"
+           class="form-control"
+           value="{{ $getSetting('emergency_phone') }}"
+           placeholder="Emergency phone number">
+</div>
+
+<div class="col-md-6 mb-3">
+    <label class="form-label">Emergency Contact Label</label>
+    <input type="text"
+           name="emergency_label"
+           class="form-control"
+           value="{{ $getSetting('emergency_label', 'Emergency Contact') }}"
+           maxlength="100"
+           placeholder="Emergency Contact">
+</div>
+
+<div class="col-12 mb-3">
+    <label class="form-label">Emergency Instructions</label>
+    <textarea name="emergency_instructions"
+              class="form-control"
+              rows="2"
+              maxlength="500"
+              placeholder="Instructions for patients requiring urgent assistance">{{ $getSetting('emergency_instructions') }}</textarea>
+</div>
+
                     <div class="col-md-6 mb-3">
                         <label class="form-label">WhatsApp Number</label>
                         <input type="text" name="whatsapp" class="form-control"

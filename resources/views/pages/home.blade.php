@@ -9,6 +9,15 @@
     $homepageHeading = $siteSettings->get('homepage_heading')?->value;
     $homepageIntro = $siteSettings->get('homepage_intro')?->value;
 
+// Emergency contact settings
+$emergencyPhone = $siteSettings->get('emergency_phone')?->value;
+$emergencyDial = preg_replace('/\D/', '', $emergencyPhone ?? '');
+
+$emergencyLabel = $siteSettings->get('emergency_label')?->value
+    ?: 'Emergency Contact';
+
+$emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
+
     $aboutHeading = $siteSettings->get('about_heading')?->value;
     $aboutParagraph1 = $siteSettings->get('about_paragraph_1')?->value;
     $aboutParagraph2 = $siteSettings->get('about_paragraph_2')?->value;
@@ -154,6 +163,47 @@
         </div>
     </div>
 </section>
+
+<!-- Emergency Contact Section -->
+@if($emergencyPhone)
+<section class="emergency-contact-section py-4">
+    <div class="container">
+        <div class="emergency-contact-card">
+
+            <div class="d-flex flex-column flex-md-row
+                        align-items-md-center justify-content-between gap-3">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <div class="emergency-contact-icon">
+                        <i class="fas fa-phone-volume"></i>
+                    </div>
+
+                    <div>
+                        <h5 class="fw-bold mb-1">
+                            {{ $emergencyLabel }}
+                        </h5>
+
+                        <p class="mb-0 text-muted">
+                            {{ $emergencyInstructions
+                                ?: 'Contact us directly for urgent enquiries.' }}
+                        </p>
+                    </div>
+
+                </div>
+
+                <a href="tel:{{ $emergencyDial }}"
+                   class="btn btn-danger px-4 py-3">
+                    <i class="fas fa-phone me-2"></i>
+                    Call {{ $emergencyPhone }}
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+@endif
 
 <!-- Introduction / About Section -->
 <section class="intro-section section-padding">
@@ -358,6 +408,98 @@
     </div>
 </section>
 
+
+<!-- Our Team Section -->
+@if(isset($therapists) && $therapists->count())
+<section class="team-section section-padding">
+    <div class="container">
+
+        <div class="section-heading text-center">
+            <span class="section-label">MEET OUR PROFESSIONALS</span>
+
+            <h2 class="section-title">
+                Our Therapists & Team
+            </h2>
+
+            <p>
+                Meet the dedicated professionals committed to supporting
+                your recovery, mobility and better health.
+            </p>
+        </div>
+
+        <div class="row g-4 mt-4 justify-content-center">
+
+            @foreach($therapists->take(3) as $therapist)
+
+                <div class="col-lg-4 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100 text-center overflow-hidden">
+
+                        @if($therapist->photo)
+                            <img
+                                src="{{ asset('storage/'.$therapist->photo) }}"
+                                alt="{{ $therapist->name }}"
+                                class="w-100"
+                                style="height:280px; object-fit:cover;"
+                                loading="lazy">
+                        @else
+                            <div class="bg-light d-flex align-items-center justify-content-center"
+                                 style="height:280px;">
+                                <i class="fas fa-user-md fa-5x text-secondary"></i>
+                            </div>
+                        @endif
+
+                        <div class="card-body p-4">
+
+                            <h4 class="fw-bold mb-1">
+                                {{ $therapist->name }}
+                            </h4>
+
+                            @if($therapist->designation)
+                                <p class="text-primary fw-semibold mb-2">
+                                    {{ $therapist->designation }}
+                                </p>
+                            @endif
+
+                            @if($therapist->qualification)
+                                <p class="text-muted small mb-2">
+                                    {{ $therapist->qualification }}
+                                </p>
+                            @endif
+
+                            @if($therapist->specialization)
+                                <p class="small mb-2">
+                                    {{ $therapist->specialization }}
+                                </p>
+                            @endif
+
+                            @if($therapist->experience_years > 0)
+                                <span class="badge bg-light text-dark">
+                                    {{ $therapist->experience_years }} Years Experience
+                                </span>
+                            @endif
+
+                        </div>
+                    </div>
+
+                </div>
+
+            @endforeach
+
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="{{ route('about') }}" class="btn btn-outline-custom">
+                Meet Our Full Team
+                <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+
+    </div>
+</section>
+@endif
+
+
 <!-- Appointment CTA -->
 <section class="appointment-cta">
     <div class="container text-center">
@@ -448,6 +590,161 @@
 
     </div>
 </section>
+
+
+<!-- Operating Hours & Upcoming Holidays -->
+<section class="operating-hours-section section-padding">
+    <div class="container">
+
+        <div class="section-heading text-center">
+            <span class="section-label">PLAN YOUR VISIT</span>
+            <h2 class="section-title">Our Opening Hours</h2>
+            <p>Visit us during our clinic hours. We look forward to welcoming you.</p>
+        </div>
+
+        <div class="row g-4 mt-4">
+
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm h-100 p-4">
+                    <h4 class="fw-bold mb-4">
+                        <i class="fas fa-clock text-primary me-2"></i>
+                        Weekly Schedule
+                    </h4>
+
+                    @forelse($operatingHours as $hour)
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+                            <strong>{{ $hour->day_of_week }}</strong>
+
+                            @if($hour->is_closed)
+                                <span class="badge bg-danger-subtle text-danger px-3 py-2">
+                                    Closed
+                                </span>
+                            @else
+                                <span class="text-success fw-semibold">
+                                    {{ \Carbon\Carbon::parse($hour->opening_time)->format('h:i A') }}
+                                    –
+                                    {{ \Carbon\Carbon::parse($hour->closing_time)->format('h:i A') }}
+                                </span>
+                            @endif
+                        </div>
+                    @empty
+                        <p class="text-muted mb-0">
+                            Please contact us for our current operating hours.
+                        </p>
+                    @endforelse
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm h-100 p-4">
+                    <h4 class="fw-bold mb-4">
+                        <i class="fas fa-calendar-days text-primary me-2"></i>
+                        Upcoming Holidays
+                    </h4>
+
+                    @forelse($upcomingHolidays as $holiday)
+                        <div class="border-bottom py-3">
+                            <div class="d-flex justify-content-between gap-3">
+                                <strong>{{ $holiday->title }}</strong>
+                                <span class="badge bg-warning-subtle text-dark">
+                                    {{ $holiday->holiday_date->format('d M Y') }}
+                                </span>
+                            </div>
+
+                            @if($holiday->description)
+                                <p class="text-muted small mb-0 mt-2">
+                                    {{ $holiday->description }}
+                                </p>
+                            @endif
+                        </div>
+                    @empty
+                        <p class="text-muted mb-0">
+                            No upcoming holidays have been announced.
+                        </p>
+                    @endforelse
+
+                    <a href="{{ route('contact') }}"
+                       class="btn btn-outline-custom mt-4">
+                        Contact Us
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Patient Testimonials -->
+@if(isset($testimonials) && $testimonials->count())
+<section class="testimonial-section section-padding">
+    <div class="container">
+
+        <div class="section-heading text-center">
+            <span class="section-label">PATIENT EXPERIENCES</span>
+            <h2 class="section-title">What Our Patients Say</h2>
+            <p>Experiences shared by people who have visited our center.</p>
+        </div>
+
+        <div class="row g-4 mt-4">
+
+            @foreach($testimonials as $testimonial)
+                <div class="col-lg-4 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100 p-4">
+
+                        <div class="text-warning mb-3">
+                            @for($i = 1; $i <= 5; $i++)
+                                <i class="fas fa-star {{ $i <= $testimonial->rating ? '' : 'text-secondary opacity-25' }}"></i>
+                            @endfor
+                        </div>
+
+                        <i class="fas fa-quote-left text-primary fa-2x mb-3"></i>
+
+                        <p class="text-muted flex-grow-1">
+                            {{ $testimonial->message }}
+                        </p>
+
+                        <div class="d-flex align-items-center gap-3 mt-3">
+
+                            @if($testimonial->photo)
+                                <img src="{{ asset('storage/'.$testimonial->photo) }}"
+                                     alt="{{ $testimonial->patient_name }}"
+                                     width="55" height="55"
+                                     class="rounded-circle"
+                                     style="object-fit:cover;">
+                            @else
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center"
+                                     style="width:55px;height:55px;">
+                                    <i class="fas fa-user text-secondary"></i>
+                                </div>
+                            @endif
+
+                            <div>
+                                <h6 class="fw-bold mb-0">
+                                    {{ $testimonial->patient_name }}
+                                </h6>
+
+                                @if($testimonial->designation)
+                                    <small class="text-muted">
+                                        {{ $testimonial->designation }}
+                                    </small>
+                                @endif
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            @endforeach
+
+        </div>
+    </div>
+</section>
+@endif
+
 
 <!-- Blog Preview -->
 <section class="blog-section section-padding">

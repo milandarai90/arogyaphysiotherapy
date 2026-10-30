@@ -5,10 +5,21 @@
     $get = fn($key, $default = '') => $siteSettings->get($key)?->value ?: $default;
 
     $phone = $get('phone');
+    $phoneDial = preg_replace('/\D/', '', $phone);
+
     $whatsapp = preg_replace('/\D/', '', $get('whatsapp', $phone));
+
+    $emergencyPhone = $get('emergency_phone');
+    $emergencyDial = preg_replace('/\D/', '', $emergencyPhone);
+    $emergencyLabel = $get('emergency_label', 'Emergency Contact');
+    $emergencyInstructions = $get('emergency_instructions');
+
     $email = $get('email');
     $address = $get('address', 'Mahendra Hwy, Bhandara, Bagmati Province 44202, Nepal');
-    $hours = $get('opening_hours', 'Please contact us for opening hours.');
+
+    $formatTime = fn($time) => $time
+        ? \Carbon\Carbon::parse($time)->format('h:i A')
+        : '';
 @endphp
 
 @section('title', $get('contact_page_title', 'Contact Arogya Physiotherapy Center'))
@@ -34,72 +45,137 @@
 
 <section class="py-5">
     <div class="container">
-
         <div class="row g-4">
 
             <!-- Contact Information -->
             <div class="col-lg-5">
-
                 <h3 class="fw-bold mb-4">Contact Information</h3>
 
+                <!-- Location -->
                 <div class="card border-0 shadow-sm rounded-4 mb-3">
-                    <div class="card-body p-4">
-                        <div class="d-flex gap-3">
-                            <i class="fas fa-map-marker-alt fa-2x" style="color:#2d53cf;"></i>
-                            <div>
-                                <h5 class="fw-bold">Our Location</h5>
-                                <p class="text-muted mb-0">{{ $address }}</p>
-                            </div>
+                    <div class="card-body p-4 d-flex gap-3">
+                        <i class="fas fa-map-marker-alt fa-2x" style="color:#2d53cf;"></i>
+                        <div>
+                            <h5 class="fw-bold">Our Location</h5>
+                            <p class="text-muted mb-0">{{ $address }}</p>
                         </div>
                     </div>
                 </div>
 
+                <!-- Regular Phone -->
                 @if($phone)
                     <div class="card border-0 shadow-sm rounded-4 mb-3">
-                        <div class="card-body p-4">
-                            <div class="d-flex gap-3">
-                                <i class="fas fa-phone fa-2x" style="color:#2d53cf;"></i>
-                                <div>
-                                    <h5 class="fw-bold">Phone</h5>
-                                    <a href="tel:{{ $phone }}" class="text-decoration-none">
-                                        {{ $phone }}
-                                    </a>
-                                </div>
+                        <div class="card-body p-4 d-flex gap-3">
+                            <i class="fas fa-phone fa-2x" style="color:#2d53cf;"></i>
+                            <div>
+                                <h5 class="fw-bold">Phone</h5>
+                                <a href="tel:{{ $phoneDial }}" class="text-decoration-none">
+                                    {{ $phone }}
+                                </a>
                             </div>
                         </div>
                     </div>
                 @endif
 
+                <!-- Emergency Contact -->
+                @if($emergencyPhone)
+                    <div class="card border-0 shadow-sm rounded-4 mb-3 border-start border-danger border-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-danger mb-2">
+                                <i class="fas fa-phone-volume me-2"></i>
+                                {{ $emergencyLabel }}
+                            </h5>
+
+                            <a href="tel:{{ $emergencyDial }}"
+                               class="btn btn-danger mt-2">
+                                <i class="fas fa-phone me-2"></i>
+                                Call {{ $emergencyPhone }}
+                            </a>
+
+                            @if($emergencyInstructions)
+                                <p class="text-muted mt-3 mb-0">
+                                    {{ $emergencyInstructions }}
+                                </p>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Email -->
                 @if($email)
                     <div class="card border-0 shadow-sm rounded-4 mb-3">
-                        <div class="card-body p-4">
-                            <div class="d-flex gap-3">
-                                <i class="fas fa-envelope fa-2x" style="color:#2d53cf;"></i>
-                                <div>
-                                    <h5 class="fw-bold">Email</h5>
-                                    <a href="mailto:{{ $email }}" class="text-decoration-none">
-                                        {{ $email }}
-                                    </a>
-                                </div>
+                        <div class="card-body p-4 d-flex gap-3">
+                            <i class="fas fa-envelope fa-2x" style="color:#2d53cf;"></i>
+                            <div>
+                                <h5 class="fw-bold">Email</h5>
+                                <a href="mailto:{{ $email }}" class="text-decoration-none">
+                                    {{ $email }}
+                                </a>
                             </div>
                         </div>
                     </div>
                 @endif
 
+                <!-- Operating Hours -->
                 <div class="card border-0 shadow-sm rounded-4 mb-3">
                     <div class="card-body p-4">
-                        <div class="d-flex gap-3">
+                        <div class="d-flex gap-3 mb-3">
                             <i class="fas fa-clock fa-2x" style="color:#2d53cf;"></i>
                             <div>
-                                <h5 class="fw-bold">Opening Hours</h5>
-                                <p class="text-muted mb-0" style="white-space:pre-line;">
-                                    {{ $hours }}
-                                </p>
+                                <h5 class="fw-bold mb-0">Opening Hours</h5>
                             </div>
                         </div>
+
+                        @forelse($operatingHours as $hour)
+                            <div class="d-flex justify-content-between gap-3 py-2 border-bottom">
+                                <span class="fw-semibold">{{ $hour->day_of_week }}</span>
+
+                                @if($hour->is_closed)
+                                    <span class="text-danger fw-semibold">Closed</span>
+                                @else
+                                    <span class="text-muted text-end">
+                                        {{ $formatTime($hour->opening_time) }}
+                                        – {{ $formatTime($hour->closing_time) }}
+                                    </span>
+                                @endif
+                            </div>
+                        @empty
+                            <p class="text-muted mb-0">
+                                {{ $get('opening_hours', 'Please contact us for opening hours.') }}
+                            </p>
+                        @endforelse
                     </div>
                 </div>
 
+                <!-- Upcoming Holidays -->
+                @if($upcomingHolidays->isNotEmpty())
+                    <div class="card border-0 shadow-sm rounded-4 mb-3">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-3">
+                                <i class="fas fa-calendar-alt me-2" style="color:#d62828;"></i>
+                                Upcoming Holidays
+                            </h5>
+
+                            @foreach($upcomingHolidays as $holiday)
+                                <div class="py-2 border-bottom">
+                                    <div class="fw-semibold">{{ $holiday->title }}</div>
+
+                                    <small class="text-muted">
+                                        {{ $holiday->holiday_date->format('d M Y') }}
+                                    </small>
+
+                                    @if($holiday->description)
+                                        <p class="small text-muted mb-0 mt-1">
+                                            {{ $holiday->description }}
+                                        </p>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                <!-- WhatsApp -->
                 @if($whatsapp)
                     <a href="https://wa.me/{{ $whatsapp }}"
                        target="_blank"
@@ -109,12 +185,10 @@
                         Chat With Us on WhatsApp
                     </a>
                 @endif
-
             </div>
 
             <!-- Enquiry Form -->
             <div class="col-lg-7">
-
                 <div class="card border-0 shadow-sm rounded-4">
                     <div class="card-body p-4 p-md-5">
 
@@ -195,13 +269,13 @@
 
                     </div>
                 </div>
-
             </div>
 
         </div>
     </div>
 </section>
 
+<!-- Google Maps -->
 <section class="pb-5">
     <div class="container">
         <div class="rounded-4 overflow-hidden shadow-sm">
