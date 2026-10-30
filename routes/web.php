@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\GalleryController;
+use App\Models\Setting;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
@@ -28,11 +29,19 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/about', function () {
-    return view('pages.home');
+    $siteSettings = Setting::all()->keyBy('key');
+
+    return view('pages.about', compact('siteSettings'));
 })->name('about');
 
 Route::get('/services', function () {
-    return view('pages.home');
+    $siteSettings = \App\Models\Setting::all()->keyBy('key');
+
+    $services = \App\Models\Service::where('is_active', true)
+        ->orderBy('name')
+        ->get();
+
+    return view('pages.services', compact('siteSettings', 'services'));
 })->name('services');
 
 Route::get('/gallery', function () {

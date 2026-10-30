@@ -544,6 +544,150 @@
             </div>
         </div>
 
+        
+<!-- Full About Us Page Settings -->
+<div class="card settings-card mb-4">
+
+    <div class="card-header bg-white py-3">
+        <h5 class="fw-bold mb-0">
+            <i class="fas fa-building me-2"></i>
+            About Us Page Settings
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+        <div class="mb-3">
+            <label class="form-label">Page Heading</label>
+            <input type="text" name="about_page_title"
+                   class="form-control"
+                   value="{{ $getSetting('about_page_title', 'About Arogya Physiotherapy Center') }}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Page Introduction</label>
+            <textarea name="about_page_intro" class="form-control" rows="4">{{ $getSetting('about_page_intro') }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Our Story Heading</label>
+            <input type="text" name="about_story_heading"
+                   class="form-control"
+                   value="{{ $getSetting('about_story_heading', 'Our Story') }}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Our Story</label>
+            <textarea name="about_story" class="form-control" rows="5">{{ $getSetting('about_story') }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Our Mission</label>
+            <textarea name="about_mission" class="form-control" rows="3">{{ $getSetting('about_mission') }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Our Vision</label>
+            <textarea name="about_vision" class="form-control" rows="3">{{ $getSetting('about_vision') }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Our Core Values</label>
+            <textarea name="about_values" class="form-control" rows="4"
+                      placeholder="Enter each value on a separate line.">{{ $getSetting('about_values') }}</textarea>
+        </div>
+
+        <div class="image-upload-box">
+            <label class="form-label">About Page Image</label>
+            <input type="file" name="about_page_image"
+                   class="form-control" accept=".jpg,.jpeg,.png,.webp">
+
+            <small class="text-muted">JPG, PNG or WEBP. Maximum 5 MB.</small>
+
+            @if($settings->get('about_page_image')?->value)
+                <div class="mt-3">
+                    <img src="{{ asset('storage/' . $settings->get('about_page_image')->value) }}"
+                         alt="About page image" class="image-preview">
+                </div>
+            @endif
+        </div>
+
+    </div>
+</div>
+
+<!-- Services Page Settings -->
+<div class="card settings-card mb-4">
+
+    <div class="card-header bg-white py-3">
+        <h5 class="fw-bold mb-0">
+            <i class="fas fa-hand-holding-medical me-2"></i>
+            Services Page Settings
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+        <div class="mb-3">
+            <label class="form-label">Page Heading</label>
+            <input type="text" name="services_page_title"
+                   class="form-control"
+                   value="{{ $getSetting('services_page_title', 'Our Physiotherapy Services') }}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Page Introduction</label>
+            <textarea name="services_page_intro" class="form-control" rows="4">{{ $getSetting('services_page_intro') }}</textarea>
+        </div>
+
+        <div class="alert alert-info mb-0">
+            Individual services, descriptions, prices, duration and active status
+            are managed from the existing Services section in your admin panel.
+        </div>
+
+    </div>
+</div>
+
+<!-- Contact Page Settings -->
+<div class="card settings-card mb-4">
+
+    <div class="card-header bg-white py-3">
+        <h5 class="fw-bold mb-0">
+            <i class="fas fa-address-card me-2"></i>
+            Contact Us Page Settings
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+        <div class="mb-3">
+            <label class="form-label">Page Heading</label>
+            <input type="text" name="contact_page_title"
+                   class="form-control"
+                   value="{{ $getSetting('contact_page_title', 'Contact Arogya Physiotherapy Center') }}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Page Introduction</label>
+            <textarea name="contact_page_intro" class="form-control" rows="4">{{ $getSetting('contact_page_intro') }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Contact Form Heading</label>
+            <input type="text" name="contact_form_heading"
+                   class="form-control"
+                   value="{{ $getSetting('contact_form_heading', 'Send Us a Message') }}">
+        </div>
+
+        <div class="alert alert-info mb-0">
+            Phone, WhatsApp, email, address and opening hours are managed
+            in the existing Contact Information section above.
+        </div>
+
+    </div>
+</div>
+
+
+
         <!-- Why Choose Us -->
         <div class="card settings-card mb-4">
 

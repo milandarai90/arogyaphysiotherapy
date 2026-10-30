@@ -103,8 +103,7 @@
                                     @foreach ($services as $service)
                                         <option
                                             value="{{ $service->id }}"
-                                            {{ old('service_id') == $service->id ? 'selected' : '' }}
-                                        >
+{{ old('service_id', $selectedServiceId ?? '') == $service->id ? 'selected' : '' }}                                        >
                                             {{ $service->name }}
                                         </option>
                                     @endforeach

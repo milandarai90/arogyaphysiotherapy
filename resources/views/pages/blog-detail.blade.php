@@ -2,6 +2,12 @@
 
 @section('title', $blog->meta_title ?: $blog->title)
 
+@section('description', $blog->meta_description ?: ($blog->excerpt ?: \Illuminate\Support\Str::limit(strip_tags($blog->content), 155)))
+@section('og_type', 'article')
+
+@if($blog->featured_image)
+    @section('og_image', asset('storage/' . $blog->featured_image))
+@endif
 @section('content')
 
 <section class="py-5 bg-light">

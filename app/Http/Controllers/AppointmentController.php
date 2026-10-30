@@ -14,13 +14,28 @@ class AppointmentController extends Controller
     /**
      * Display the public appointment booking form.
      */
-    public function create()
+    public function create(Request $request)
     {
         $services = Service::where('is_active', true)
             ->orderBy('name')
             ->get();
 
-        return view('appointments.create', compact('services'));
+        $selectedService = $request->query('service');
+
+        $selectedServiceId = null;
+
+        if ($selectedService && filter_var($selectedService, FILTER_VALIDATE_INT)) {
+            $validService = $services->firstWhere('id', (int) $selectedService);
+
+            if ($validService) {
+                $selectedServiceId = $validService->id;
+            }
+        }
+
+        return view('appointments.create', compact(
+            'services',
+            'selectedServiceId'
+        ));
     }
 
     /**

@@ -21,7 +21,20 @@
       content="@yield('description', $seoDescription)">
 
 <meta name="robots" content="index, follow">
-    @php
+
+{{-- Open Graph / Facebook / Messenger --}}
+<meta property="og:type" content="@yield('og_type', 'website')">
+<meta property="og:site_name" content="{{ $clinicName ?? 'Arogya Physiotherapy Center' }}">
+<meta property="og:title" content="@yield('title', $seoTitle)">
+<meta property="og:description" content="@yield('description', $seoDescription)">
+<meta property="og:url" content="{{ url()->current() }}">
+<meta property="og:image" content="@yield('og_image', asset('images/logo.png'))">
+
+{{-- Twitter / X --}}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="@yield('title', $seoTitle)">
+<meta name="twitter:description" content="@yield('description', $seoDescription)">
+<meta name="twitter:image" content="@yield('og_image', asset('images/logo.png'))">    @php
         $logoPath = $siteSettings->get('logo')?->value;
         $clinicName = $siteSettings->get('clinic_name')?->value ?? 'Arogya Physiotherapy Center';
 

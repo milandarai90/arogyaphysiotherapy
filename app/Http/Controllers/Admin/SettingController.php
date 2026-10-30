@@ -44,16 +44,25 @@ class SettingController extends Controller
             'seo_title' => ['nullable', 'string', 'max:255'],
             'seo_description' => ['nullable', 'string', 'max:500'],
 
-            // Homepage hero section
+            // Homepage hero
             'homepage_heading' => ['nullable', 'string', 'max:255'],
             'homepage_intro' => ['nullable', 'string', 'max:2000'],
 
-            // About section
+            // Homepage about section
             'about_heading' => ['nullable', 'string', 'max:255'],
             'about_paragraph_1' => ['nullable', 'string', 'max:2000'],
             'about_paragraph_2' => ['nullable', 'string', 'max:2000'],
 
-            // Why Choose Us section
+            // Full About page
+            'about_page_title' => ['nullable', 'string', 'max:255'],
+            'about_page_intro' => ['nullable', 'string', 'max:3000'],
+            'about_story_heading' => ['nullable', 'string', 'max:255'],
+            'about_story' => ['nullable', 'string', 'max:5000'],
+            'about_mission' => ['nullable', 'string', 'max:2000'],
+            'about_vision' => ['nullable', 'string', 'max:2000'],
+            'about_values' => ['nullable', 'string', 'max:3000'],
+
+            // Why choose us
             'why_heading' => ['nullable', 'string', 'max:255'],
             'why_intro' => ['nullable', 'string', 'max:2000'],
 
@@ -71,7 +80,16 @@ class SettingController extends Controller
             'gallery_heading' => ['nullable', 'string', 'max:255'],
             'blog_heading' => ['nullable', 'string', 'max:255'],
 
-            // Appointment CTA section
+            // Full Services page
+            'services_page_title' => ['nullable', 'string', 'max:255'],
+            'services_page_intro' => ['nullable', 'string', 'max:3000'],
+
+            // Contact page
+            'contact_page_title' => ['nullable', 'string', 'max:255'],
+            'contact_page_intro' => ['nullable', 'string', 'max:3000'],
+            'contact_form_heading' => ['nullable', 'string', 'max:255'],
+
+            // Appointment CTA
             'appointment_cta_heading' => ['nullable', 'string', 'max:255'],
             'appointment_cta_description' => ['nullable', 'string', 'max:1000'],
             'appointment_cta_button' => ['nullable', 'string', 'max:100'],
@@ -79,28 +97,28 @@ class SettingController extends Controller
             // Footer
             'footer_text' => ['nullable', 'string', 'max:1000'],
 
-            // Logo
+            // Images
             'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-
-            // Homepage images
             'hero_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'about_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'about_page_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'why_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ]);
 
-        // Save normal text settings
-        $imageFields = [
-            'logo',
-            'hero_image',
-            'about_image',
-            'why_image',
+        $imageGroups = [
+            'logo' => 'general',
+            'hero_image' => 'homepage',
+            'about_image' => 'about',
+            'about_page_image' => 'about',
+            'why_image' => 'why_choose_us',
         ];
 
-        foreach ($imageFields as $field) {
-            unset($validated[$field]);
-        }
-
+        // Save normal text fields.
         foreach ($validated as $key => $value) {
+            if (array_key_exists($key, $imageGroups)) {
+                continue;
+            }
+
             Setting::updateOrCreate(
                 ['key' => $key],
                 [
@@ -110,14 +128,7 @@ class SettingController extends Controller
             );
         }
 
-        // Handle image uploads
-        $imageGroups = [
-            'logo' => 'general',
-            'hero_image' => 'homepage',
-            'about_image' => 'about',
-            'why_image' => 'why_choose_us',
-        ];
-
+        // Save uploaded images.
         foreach ($imageGroups as $field => $group) {
             if (!$request->hasFile($field)) {
                 continue;
@@ -150,47 +161,37 @@ class SettingController extends Controller
         return match (true) {
 
             in_array($key, [
-                'phone',
-                'whatsapp',
-                'email',
-                'address',
-                'opening_hours',
+                'phone', 'whatsapp', 'email', 'address', 'opening_hours',
+                'contact_page_title', 'contact_page_intro',
+                'contact_form_heading',
             ]) => 'contact',
 
             in_array($key, [
-                'facebook',
-                'instagram',
-                'tiktok',
-                'youtube',
-                'linkedin',
-                'twitter',
-                'threads',
-                'viber',
+                'facebook', 'instagram', 'tiktok', 'youtube',
+                'linkedin', 'twitter', 'threads', 'viber',
             ]) => 'social',
 
             in_array($key, [
-                'seo_title',
-                'seo_description',
+                'seo_title', 'seo_description',
             ]) => 'seo',
 
             in_array($key, [
-                'homepage_heading',
-                'homepage_intro',
-                'hero_image',
-                'services_heading',
-                'gallery_heading',
-                'blog_heading',
-                'appointment_cta_heading',
-                'appointment_cta_description',
+                'homepage_heading', 'homepage_intro', 'hero_image',
+                'services_heading', 'gallery_heading', 'blog_heading',
+                'appointment_cta_heading', 'appointment_cta_description',
                 'appointment_cta_button',
             ]) => 'homepage',
 
             in_array($key, [
-                'about_heading',
-                'about_paragraph_1',
-                'about_paragraph_2',
-                'about_image',
+                'about_heading', 'about_paragraph_1', 'about_paragraph_2',
+                'about_image', 'about_page_title', 'about_page_intro',
+                'about_story_heading', 'about_story', 'about_mission',
+                'about_vision', 'about_values', 'about_page_image',
             ]) => 'about',
+
+            in_array($key, [
+                'services_page_title', 'services_page_intro',
+            ]) => 'services',
 
             str_starts_with($key, 'why_') => 'why_choose_us',
 
