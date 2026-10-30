@@ -126,10 +126,9 @@
     Gallery
 </a>
 
-            <a href="#">
-                <i class="fa-solid fa-newspaper me-2"></i>
-                Blog
-            </a>
+          <a href="{{ route('admin.blog.index') }}" class="nav-link">
+    <i class="fas fa-newspaper me-2"></i> Blog Management
+</a>
 
             <a href="#">
                 <i class="fa-solid fa-gear me-2"></i>

@@ -1,13 +1,26 @@
+
 <?php
 
 use Illuminate\Support\Facades\Route;
+
+use App\Models\Gallery;
+
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\BlogController;
+
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\ServiceController;   
-use App\Models\Gallery;
+use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
+
+
+/*
+|--------------------------------------------------------------------------
+| Public Website Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return view('pages.home');
@@ -30,15 +43,24 @@ Route::get('/gallery', function () {
     return view('pages.gallery', compact('galleries'));
 })->name('gallery');
 
-Route::get('/blog', function () {
-    return view('pages.home');
-})->name('blog');
+// Public Blog
+Route::get('/blog', [BlogController::class, 'index'])
+    ->name('blog');
+
+Route::get('/blog/{slug}', [BlogController::class, 'show'])
+    ->name('blog.show');
 
 Route::get('/contact', function () {
     return view('pages.home');
 })->name('contact');
 
-// Public Appointment Booking
+
+/*
+|--------------------------------------------------------------------------
+| Public Appointment Booking
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/appointment', [AppointmentController::class, 'create'])
     ->name('appointment.create');
 
@@ -48,10 +70,17 @@ Route::post('/appointment', [AppointmentController::class, 'store'])
 Route::get('/appointment/success/{reference}', [AppointmentController::class, 'success'])
     ->name('appointment.success');
 
-    
-// Admin Authentication
+
+/*
+|--------------------------------------------------------------------------
+| Admin Authentication
+|--------------------------------------------------------------------------
+*/
+
 Route::prefix('admin')->name('admin.')->group(function () {
+
     Route::middleware('guest')->group(function () {
+
         Route::get('/login', [AuthController::class, 'showLogin'])
             ->name('login');
 
@@ -63,17 +92,26 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])
         ->middleware('admin')
         ->name('logout');
-
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| Admin Dashboard and Management
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('admin')->group(function () {
+
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('admin.dashboard');
-});
 
-Route::middleware('admin')->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])
         ->name('admin.dashboard');
 
+
+    // Appointment Management
     Route::get('/admin/appointments', [AdminAppointmentController::class, 'index'])
         ->name('admin.appointments.index');
 
@@ -87,50 +125,72 @@ Route::middleware('admin')->group(function () {
         ->name('admin.appointments.reschedule');
 
 
+    // Service Management
+    Route::get('/admin/services', [ServiceController::class, 'index'])
+        ->name('admin.services.index');
 
-        // Service Management
-Route::get('/admin/services', [ServiceController::class, 'index'])
-    ->name('admin.services.index');
+    Route::get('/admin/services/create', [ServiceController::class, 'create'])
+        ->name('admin.services.create');
 
-Route::get('/admin/services/create', [ServiceController::class, 'create'])
-    ->name('admin.services.create');
+    Route::post('/admin/services', [ServiceController::class, 'store'])
+        ->name('admin.services.store');
 
-Route::post('/admin/services', [ServiceController::class, 'store'])
-    ->name('admin.services.store');
+    Route::get('/admin/services/{service}/edit', [ServiceController::class, 'edit'])
+        ->name('admin.services.edit');
 
-Route::get('/admin/services/{service}/edit', [ServiceController::class, 'edit'])
-    ->name('admin.services.edit');
+    Route::put('/admin/services/{service}', [ServiceController::class, 'update'])
+        ->name('admin.services.update');
 
-Route::put('/admin/services/{service}', [ServiceController::class, 'update'])
-    ->name('admin.services.update');
+    Route::patch('/admin/services/{service}/toggle-status', [ServiceController::class, 'toggleStatus'])
+        ->name('admin.services.toggle');
 
-Route::patch('/admin/services/{service}/toggle-status', [ServiceController::class, 'toggleStatus'])
-    ->name('admin.services.toggle');
-
-Route::delete('/admin/services/{service}', [ServiceController::class, 'destroy'])
-    ->name('admin.services.destroy');
-
+    Route::delete('/admin/services/{service}', [ServiceController::class, 'destroy'])
+        ->name('admin.services.destroy');
 
 
     // Gallery Management
-Route::get('/admin/gallery', [GalleryController::class, 'index'])
-    ->name('admin.gallery.index');
+    Route::get('/admin/gallery', [GalleryController::class, 'index'])
+        ->name('admin.gallery.index');
 
-Route::get('/admin/gallery/create', [GalleryController::class, 'create'])
-    ->name('admin.gallery.create');
+    Route::get('/admin/gallery/create', [GalleryController::class, 'create'])
+        ->name('admin.gallery.create');
 
-Route::post('/admin/gallery', [GalleryController::class, 'store'])
-    ->name('admin.gallery.store');
+    Route::post('/admin/gallery', [GalleryController::class, 'store'])
+        ->name('admin.gallery.store');
 
-Route::get('/admin/gallery/{gallery}/edit', [GalleryController::class, 'edit'])
-    ->name('admin.gallery.edit');
+    Route::get('/admin/gallery/{gallery}/edit', [GalleryController::class, 'edit'])
+        ->name('admin.gallery.edit');
 
-Route::put('/admin/gallery/{gallery}', [GalleryController::class, 'update'])
-    ->name('admin.gallery.update');
+    Route::put('/admin/gallery/{gallery}', [GalleryController::class, 'update'])
+        ->name('admin.gallery.update');
 
-Route::patch('/admin/gallery/{gallery}/toggle-status', [GalleryController::class, 'toggleStatus'])
-    ->name('admin.gallery.toggle');
+    Route::patch('/admin/gallery/{gallery}/toggle-status', [GalleryController::class, 'toggleStatus'])
+        ->name('admin.gallery.toggle');
 
-Route::delete('/admin/gallery/{gallery}', [GalleryController::class, 'destroy'])
-    ->name('admin.gallery.destroy');
+    Route::delete('/admin/gallery/{gallery}', [GalleryController::class, 'destroy'])
+        ->name('admin.gallery.destroy');
+
+
+    // Blog Management
+    Route::get('/admin/blog', [AdminBlogController::class, 'index'])
+        ->name('admin.blog.index');
+
+    Route::get('/admin/blog/create', [AdminBlogController::class, 'create'])
+        ->name('admin.blog.create');
+
+    Route::post('/admin/blog', [AdminBlogController::class, 'store'])
+        ->name('admin.blog.store');
+
+    Route::get('/admin/blog/{blog}/edit', [AdminBlogController::class, 'edit'])
+        ->name('admin.blog.edit');
+
+    Route::put('/admin/blog/{blog}', [AdminBlogController::class, 'update'])
+        ->name('admin.blog.update');
+
+    Route::patch('/admin/blog/{blog}/toggle-status', [AdminBlogController::class, 'toggleStatus'])
+        ->name('admin.blog.toggle');
+
+    Route::delete('/admin/blog/{blog}', [AdminBlogController::class, 'destroy'])
+        ->name('admin.blog.destroy');
+
 });
