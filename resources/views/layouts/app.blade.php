@@ -173,6 +173,13 @@
                         <a class="nav-link" href="{{ route('contact') }}">Contact</a>
                     </li>
 
+                    <li class="nav-item">
+    <a class="nav-link {{ request()->routeIs('appointment.status') ? 'active' : '' }}"
+       href="{{ route('appointment.status') }}">
+        Check Appointment
+    </a>
+</li>
+
                     <li class="nav-item ms-lg-2">
                         <a href="{{ route('appointment.create') }}"
                            class="btn btn-book">

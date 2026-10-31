@@ -1,5 +1,6 @@
-
 @extends('layouts.app')
+
+@section('title', 'Appointment Submitted | Arogya Physiotherapy Center')
 
 @section('content')
 
@@ -22,7 +23,7 @@
 
                     <p class="text-muted">
                         Thank you, {{ $appointment->patient_name }}.
-                        Your appointment request has been received.
+                        Your appointment request has been received successfully.
                     </p>
 
                     <div class="bg-light rounded p-4 my-4">
@@ -59,7 +60,19 @@
 
                             <p class="mb-0">
                                 <strong>Status:</strong>
-                                <span class="badge bg-warning text-dark">
+
+                                @php
+                                    $statusColors = [
+                                        'pending' => 'warning',
+                                        'approved' => 'success',
+                                        'rejected' => 'danger',
+                                        'rescheduled' => 'info',
+                                        'completed' => 'primary',
+                                        'cancelled' => 'secondary',
+                                    ];
+                                @endphp
+
+                                <span class="badge bg-{{ $statusColors[$appointment->status] ?? 'secondary' }}">
                                     {{ ucfirst($appointment->status) }}
                                 </span>
                             </p>
@@ -68,14 +81,32 @@
 
                     </div>
 
+                    <div class="alert alert-info text-start">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Important:</strong>
+                        Please save your booking reference. You can use it along
+                        with your registered phone number to check whether your
+                        appointment has been accepted, rejected, or rescheduled.
+                    </div>
+
                     <p class="text-muted">
-                        Please keep your booking reference.
-                        The clinic will contact you to confirm your appointment.
+                        Your appointment is currently subject to clinic approval.
+                        Please check your appointment status on our website for updates.
                     </p>
 
-                    <a href="{{ url('/') }}" class="btn-primary-custom">
-                        Return to Homepage
-                    </a>
+                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mt-4">
+
+                        <a href="{{ route('appointment.status') }}"
+                           class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-clipboard-check me-2"></i>
+                            Check Appointment Status
+                        </a>
+
+                        <a href="{{ url('/') }}" class="btn-primary-custom">
+                            Return to Homepage
+                        </a>
+
+                    </div>
 
                 </div>
 

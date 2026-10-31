@@ -9,6 +9,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\AppointmentStatusController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ServiceController;
@@ -167,7 +168,12 @@ Route::post('/appointment', [AppointmentController::class, 'store'])
 Route::get('/appointment/success/{reference}', [AppointmentController::class, 'success'])
     ->name('appointment.success');
 
+Route::get('/appointment-status', [AppointmentStatusController::class, 'index'])
+    ->name('appointment.status');
 
+Route::post('/appointment-status', [AppointmentStatusController::class, 'check'])
+    ->middleware('throttle:10,1')
+    ->name('appointment.status.check');
 /*
 |--------------------------------------------------------------------------
 | Admin Authentication
@@ -375,3 +381,9 @@ Route::get('/admin/settings', [SettingController::class, 'index'])
 Route::put('/admin/settings', [SettingController::class, 'update'])
     ->name('admin.settings.update');
 });
+
+
+Route::get('/appointment-available-slots', [
+    \App\Http\Controllers\AppointmentController::class,
+    'availableSlots'
+])->name('appointment.available-slots');

@@ -33,6 +33,19 @@ class SettingController extends Controller
             'address' => ['nullable', 'string', 'max:500'],
             'opening_hours' => ['nullable', 'string', 'max:500'],
 
+            // Appointment slot settings
+            'appointment_slot_interval' => [
+                'required',
+                'in:10,15,20,30,45,60,custom',
+            ],
+            'appointment_slot_custom' => [
+                'nullable',
+                'required_if:appointment_slot_interval,custom',
+                'integer',
+                'min:5',
+                'max:180',
+            ],
+
             // Social media
             'facebook' => ['nullable', 'url', 'max:255'],
             'instagram' => ['nullable', 'url', 'max:255'],
@@ -116,9 +129,28 @@ class SettingController extends Controller
             'why_image' => 'why_choose_us',
         ];
 
+        // Resolve the actual interval.
+        $interval = $validated['appointment_slot_interval'] === 'custom'
+            ? (int) $validated['appointment_slot_custom']
+            : (int) $validated['appointment_slot_interval'];
+
+        Setting::updateOrCreate(
+            ['key' => 'appointment_slot_interval'],
+            [
+                'value' => $interval,
+                'group' => 'appointments',
+            ]
+        );
+
         // Save normal text fields.
         foreach ($validated as $key => $value) {
-            if (array_key_exists($key, $imageGroups)) {
+            if (
+                array_key_exists($key, $imageGroups) ||
+                in_array($key, [
+                    'appointment_slot_interval',
+                    'appointment_slot_custom',
+                ], true)
+            ) {
                 continue;
             }
 

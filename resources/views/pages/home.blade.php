@@ -104,20 +104,26 @@ $emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
                     {{ $homepageIntro ?: 'Your journey towards a healthier and pain-free life starts here. Experience personalized physiotherapy and rehabilitation care at Arogya Physiotherapy Center.' }}
                 </p>
 
-                <div class="d-flex flex-wrap gap-3 mt-4">
+               <div class="d-flex flex-wrap gap-3 mt-4">
 
-                    <a href="{{ route('appointment.create') }}"
-                       class="btn btn-primary-custom">
-                        Book An Appointment
-                        <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
+    <a href="{{ route('appointment.create') }}"
+       class="btn btn-primary-custom">
+        Book An Appointment
+        <i class="fas fa-arrow-right ms-2"></i>
+    </a>
 
-                    <a href="{{ route('services') }}"
-                       class="btn btn-outline-custom">
-                        Explore Services
-                    </a>
+    <a href="{{ route('appointment.status') }}"
+       class="btn btn-outline-custom">
+        <i class="fas fa-clipboard-check me-2"></i>
+        Check Appointment Status
+    </a>
 
-                </div>
+    <a href="{{ route('services') }}"
+       class="btn btn-outline-custom">
+        Explore Services
+    </a>
+
+</div>
 
                 <div class="hero-features mt-5">
                     <div>

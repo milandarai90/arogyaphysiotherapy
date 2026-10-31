@@ -851,6 +851,84 @@
             </div>
         </div>
 
+        <!-- Appointment Slot Settings -->
+        <div class="card settings-card mb-4">
+
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0">
+                    <i class="fas fa-clock me-2"></i>
+                    Appointment Slot Settings
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                @php
+                    $savedInterval = (int) ($settings->get('appointment_slot_interval')?->value ?? 30);
+                    $standardIntervals = [10, 15, 20, 30, 45, 60];
+                    $isCustomInterval = !in_array($savedInterval, $standardIntervals, true);
+                @endphp
+
+                <p class="text-muted small mb-3">
+                    Choose how frequently patients can book appointment times.
+                    This setting applies to future available appointment slots.
+                </p>
+
+                <div class="row align-items-end">
+                    <div class="col-md-6 mb-3">
+                        <label for="appointment_slot_interval" class="form-label">
+                            Appointment Slot Interval
+                        </label>
+
+                        <select name="appointment_slot_interval"
+                                id="appointment_slot_interval"
+                                class="form-select"
+                                required>
+                            @foreach([10, 15, 20, 30, 45, 60] as $minutes)
+                                <option value="{{ $minutes }}"
+                                    {{ !$isCustomInterval && $savedInterval === $minutes ? 'selected' : '' }}>
+                                    Every {{ $minutes }} minutes
+                                </option>
+                            @endforeach
+                            <option value="custom" {{ $isCustomInterval ? 'selected' : '' }}>
+                                Custom interval
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3"
+                         id="customIntervalContainer"
+                         style="{{ $isCustomInterval ? '' : 'display: none;' }}">
+                        <label for="appointment_slot_custom" class="form-label">
+                            Custom Interval (minutes)
+                        </label>
+
+                        <input type="number"
+                               name="appointment_slot_custom"
+                               id="appointment_slot_custom"
+                               class="form-control"
+                               min="5"
+                               max="180"
+                               step="1"
+                               value="{{ $isCustomInterval ? $savedInterval : 30 }}"
+                               placeholder="Enter minutes">
+
+                        <small class="text-muted">
+                            Enter a value between 5 and 180 minutes.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="alert alert-info small mb-0">
+                    <i class="fas fa-circle-info me-1"></i>
+                    Example: A 30-minute interval creates appointment times such as
+                    9:00 AM, 9:30 AM, 10:00 AM and 10:30 AM, within your clinic's
+                    operating hours. Existing appointments will not be changed.
+                </div>
+
+            </div>
+        </div>
+
         <!-- Appointment CTA -->
         <div class="card settings-card mb-4">
 
@@ -933,6 +1011,29 @@
     </form>
 
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const intervalSelect = document.getElementById('appointment_slot_interval');
+        const customContainer = document.getElementById('customIntervalContainer');
+        const customInput = document.getElementById('appointment_slot_custom');
+
+        if (!intervalSelect || !customContainer || !customInput) {
+            return;
+        }
+
+        function updateCustomIntervalVisibility() {
+            const isCustom = intervalSelect.value === 'custom';
+
+            customContainer.style.display = isCustom ? '' : 'none';
+            customInput.required = isCustom;
+            customInput.disabled = !isCustom;
+        }
+
+        intervalSelect.addEventListener('change', updateCustomIntervalVisibility);
+        updateCustomIntervalVisibility();
+    });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 

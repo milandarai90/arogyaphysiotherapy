@@ -123,44 +123,51 @@
 
                         <h5 class="mb-4">Appointment Details</h5>
 
-                        <div class="row">
+                       
+<div class="row">
 
-                            <div class="col-md-6 mb-3">
-                                <label for="appointment_date" class="form-label">
-                                    Preferred Date *
-                                </label>
+    <div class="col-md-6 mb-3">
+        <label for="appointment_date" class="form-label">
+            Preferred Date *
+        </label>
 
-                                <input
-                                    type="date"
-                                    id="appointment_date"
-                                    name="appointment_date"
-                                    class="form-control"
-                                    value="{{ old('appointment_date') }}"
-                                    min="{{ now()->toDateString() }}"
-                                    required
-                                >
-                            </div>
+        <input
+            type="date"
+            id="appointment_date"
+            name="appointment_date"
+            class="form-control"
+            value="{{ old('appointment_date') }}"
+            min="{{ now()->toDateString() }}"
+            required
+        >
 
-                            <div class="col-md-6 mb-3">
-                                <label for="appointment_time" class="form-label">
-                                    Preferred Time *
-                                </label>
+        <small class="text-muted" id="date-message">
+            Select a date to see available appointment times.
+        </small>
+    </div>
 
-                                <input
-                                    type="time"
-                                    id="appointment_time"
-                                    name="appointment_time"
-                                    class="form-control"
-                                    value="{{ old('appointment_time') }}"
-                                    required
-                                >
+    <div class="col-md-6 mb-3">
+        <label for="appointment_time" class="form-label">
+            Available Time Slots *
+        </label>
 
-                                <small class="text-muted">
-                                    Your requested time will be confirmed by the clinic.
-                                </small>
-                            </div>
+        <select
+            id="appointment_time"
+            name="appointment_time"
+            class="form-select"
+            required
+            disabled
+        >
+            <option value="">Select a date first</option>
+        </select>
 
-                        </div>
+        <small class="text-muted" id="time-message">
+            Available slots will appear here.
+        </small>
+    </div>
+
+</div>
+
 
                         <div class="mb-3">
                             <label for="symptoms" class="form-label">
@@ -217,5 +224,96 @@
 
     </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const dateInput = document.getElementById('appointment_date');
+    const timeSelect = document.getElementById('appointment_time');
+    const dateMessage = document.getElementById('date-message');
+    const timeMessage = document.getElementById('time-message');
+
+    const oldTime = @json(old('appointment_time'));
+
+    function resetSlots(message) {
+        timeSelect.innerHTML = '<option value="">Select a date first</option>';
+        timeSelect.disabled = true;
+        timeMessage.textContent = message;
+    }
+
+    async function loadSlots() {
+        const date = dateInput.value;
+
+        if (!date) {
+            resetSlots('Available slots will appear here.');
+            return;
+        }
+
+        timeSelect.innerHTML = '<option value="">Loading available times...</option>';
+        timeSelect.disabled = true;
+        dateMessage.textContent = 'Checking clinic availability...';
+        timeMessage.textContent = 'Please wait...';
+
+        try {
+            const url = new URL(
+                @json(route('appointment.available-slots')),
+                window.location.origin
+            );
+
+            url.searchParams.set('date', date);
+
+            const response = await fetch(url, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Unable to load available times.');
+            }
+
+            timeSelect.innerHTML = '';
+
+            if (!data.available || !data.slots.length) {
+                timeSelect.innerHTML = '<option value="">No available slots</option>';
+                timeSelect.disabled = true;
+                dateMessage.textContent = data.message;
+                timeMessage.textContent = 'Please select another date.';
+                return;
+            }
+
+            timeSelect.innerHTML = '<option value="">Select a time</option>';
+
+            data.slots.forEach(function (slot) {
+                const option = document.createElement('option');
+                option.value = slot.value;
+                option.textContent = slot.label;
+
+                if (oldTime && oldTime === slot.value) {
+                    option.selected = true;
+                }
+
+                timeSelect.appendChild(option);
+            });
+
+            timeSelect.disabled = false;
+            dateMessage.textContent = 'Clinic is open on this date.';
+            timeMessage.textContent = data.message;
+
+        } catch (error) {
+            resetSlots('Unable to load appointment times. Please try again.');
+            dateMessage.textContent = 'Availability check failed.';
+            console.error(error);
+        }
+    }
+
+    dateInput.addEventListener('change', loadSlots);
+
+    if (dateInput.value) {
+        loadSlots();
+    }
+});
+</script>
 
 @endsection
