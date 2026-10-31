@@ -581,6 +581,61 @@
             </div>
         </div>
 
+        {{-- Google Maps Location --}}
+<div class="card border-0 shadow-sm rounded-3 mb-4">
+    <div class="card-header bg-white border-bottom p-3">
+        <h5 class="fw-bold mb-0">
+            <i class="fas fa-map-location-dot text-primary me-2"></i>
+            Google Maps Location
+        </h5>
+    </div>
+
+    <div class="card-body">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Google Maps Embed URL</label>
+
+            <input type="url"
+                name="google_maps_embed_url"
+                id="google_maps_embed_url"
+                class="form-control @error('google_maps_embed_url') is-invalid @enderror"
+                value="{{ $getSetting('google_maps_embed_url') }}"
+                placeholder="https://www.google.com/maps/embed?pb=...">
+
+            @error('google_maps_embed_url')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+
+            <small class="text-muted">
+                Paste the URL from Google Maps → Share → Embed a map → Copy HTML.
+                Copy only the URL inside the iframe's src attribute.
+            </small>
+        </div>
+
+        <div class="alert alert-info small">
+            <i class="fas fa-info-circle me-1"></i>
+            This location will automatically appear on your public Contact page.
+            You can change it anytime from this dashboard.
+        </div>
+
+        <div id="googleMapsPreviewContainer"
+            class="{{ $getSetting('google_maps_embed_url') ? '' : 'd-none' }}">
+            <label class="form-label fw-semibold">Map Preview</label>
+
+            <div class="rounded-3 overflow-hidden border">
+                <iframe
+                    id="googleMapsPreview"
+                    src="{{ $getSetting('google_maps_embed_url') }}"
+                    width="100%"
+                    height="300"
+                    style="border:0;"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
         {{-- Social Media --}}
         <div class="card border-0 shadow-sm rounded-3 mb-4">
             <div class="card-header bg-white border-bottom p-3">
@@ -1237,5 +1292,26 @@
         intervalSelect.addEventListener('change', updateCustomIntervalVisibility);
         updateCustomIntervalVisibility();
     });
+
+    const mapUrlInput = document.getElementById('google_maps_embed_url');
+const mapPreview = document.getElementById('googleMapsPreview');
+const mapPreviewContainer = document.getElementById('googleMapsPreviewContainer');
+
+if (mapUrlInput && mapPreview && mapPreviewContainer) {
+    mapUrlInput.addEventListener('input', function () {
+        const url = this.value.trim();
+
+        if (url.startsWith('https://www.google.com/maps/embed') ||
+            url.startsWith('https://google.com/maps/embed') ||
+            url.startsWith('https://maps.google.com/maps')) {
+
+            mapPreview.src = url;
+            mapPreviewContainer.classList.remove('d-none');
+        } else {
+            mapPreview.src = 'about:blank';
+            mapPreviewContainer.classList.add('d-none');
+        }
+    });
+}
     </script>
     @endpush

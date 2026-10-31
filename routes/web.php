@@ -9,6 +9,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\AppointmentStatusController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -213,7 +214,19 @@ Route::middleware('admin')->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])
         ->name('admin.dashboard');
 
+// Admin Profile
+Route::get('/admin/profile', [ProfileController::class, 'edit'])
+    ->name('admin.profile.edit');
 
+Route::put('/admin/profile', [ProfileController::class, 'update'])
+    ->name('admin.profile.update');
+
+Route::put('/admin/profile/password', [ProfileController::class, 'updatePassword'])
+    ->name('admin.profile.password');
+
+Route::delete('/admin/profile/photo', [ProfileController::class, 'removePhoto'])
+    ->name('admin.profile.photo.remove');
+    
     // Appointment Management
     Route::get('/admin/appointments', [AdminAppointmentController::class, 'index'])
         ->name('admin.appointments.index');

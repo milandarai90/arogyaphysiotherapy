@@ -33,6 +33,40 @@ class SettingController extends Controller
             'address' => ['nullable', 'string', 'max:500'],
             'opening_hours' => ['nullable', 'string', 'max:500'],
 
+            // Google Maps
+            'google_maps_embed_url' => [
+                'nullable',
+                'url',
+                'max:2000',
+                function ($attribute, $value, $fail) {
+                    if (!$value) {
+                        return;
+                    }
+
+                    $host = parse_url($value, PHP_URL_HOST);
+                    $path = parse_url($value, PHP_URL_PATH);
+
+                    $validGoogleMapsUrl =
+                        in_array($host, [
+                            'www.google.com',
+                            'google.com',
+                            'maps.google.com',
+                        ], true)
+                        &&
+                        (
+                            ($host === 'www.google.com' || $host === 'google.com')
+                            && str_starts_with($path ?? '', '/maps/embed')
+                            ||
+                            $host === 'maps.google.com'
+                            && str_starts_with($path ?? '', '/maps')
+                        );
+
+                    if (!$validGoogleMapsUrl) {
+                        $fail('Please enter a valid Google Maps Embed URL.');
+                    }
+                },
+            ],
+
             // Appointment slot settings
             'appointment_slot_interval' => [
                 'required',
@@ -129,7 +163,7 @@ class SettingController extends Controller
             'why_image' => 'why_choose_us',
         ];
 
-        // Resolve the actual interval.
+        // Resolve the actual appointment interval.
         $interval = $validated['appointment_slot_interval'] === 'custom'
             ? (int) $validated['appointment_slot_custom']
             : (int) $validated['appointment_slot_interval'];
@@ -204,6 +238,7 @@ class SettingController extends Controller
                 'email',
                 'address',
                 'opening_hours',
+                'google_maps_embed_url',
                 'contact_page_title',
                 'contact_page_intro',
                 'contact_form_heading',

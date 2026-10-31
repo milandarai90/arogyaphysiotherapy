@@ -311,6 +311,13 @@
             <i class="fa-solid fa-gear"></i> Website Settings
         </a>
 
+        <div class="sidebar-section">Account</div>
+
+<a href="{{ route('admin.profile.edit') }}"
+   class="{{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
+    <i class="fa-solid fa-user-circle"></i> My Profile
+</a>
+
         <div class="sidebar-section">Website</div>
 
         <a href="{{ route('home') }}" target="_blank">
@@ -362,14 +369,24 @@
             </span>
 
             <div class="d-flex align-items-center gap-2">
-                <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center"
-                     style="width:36px;height:36px;">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-
-                <span class="fw-semibold small">
-                    {{ auth()->user()->name }}
-                </span>
+                
+@if(auth()->user()->profile_photo_path)
+    <img
+        src="{{ asset('storage/' . auth()->user()->profile_photo_path) }}"
+        alt="Profile"
+        class="rounded-circle"
+        style="width:36px;height:36px;object-fit:cover;"
+    >
+@else
+    <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center"
+         style="width:36px;height:36px;">
+        <i class="fa-solid fa-user"></i>
+    </div>
+@endif
+               <a href="{{ route('admin.profile.edit') }}"
+   class="fw-semibold small text-dark text-decoration-none">
+    {{ auth()->user()->name }}
+</a>
             </div>
         </div>
 

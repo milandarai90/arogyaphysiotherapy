@@ -16,7 +16,7 @@
 
     $email = $get('email');
     $address = $get('address', 'Mahendra Hwy, Bhandara, Bagmati Province 44202, Nepal');
-
+    $googleMapsEmbedUrl = $get('google_maps_embed_url');
     $formatTime = fn($time) => $time
         ? \Carbon\Carbon::parse($time)->format('h:i A')
         : '';
@@ -275,21 +275,23 @@
     </div>
 </section>
 
-<!-- Google Maps -->
-<section class="pb-5">
-    <div class="container">
-        <div class="rounded-4 overflow-hidden shadow-sm">
-            <iframe
-                src="https://www.google.com/maps?q=Mahendra+Highway,+Bhandara,+Nepal&output=embed"
-                width="100%"
-                height="350"
-                style="border:0;"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade">
-            </iframe>
+{{-- Google Maps --}}
+@if($googleMapsEmbedUrl)
+    <section class="pb-5">
+        <div class="container">
+            <div class="rounded-4 overflow-hidden shadow-sm">
+                <iframe
+                    src="{{ $googleMapsEmbedUrl }}"
+                    width="100%"
+                    height="400"
+                    style="border:0;"
+                    allowfullscreen
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
+@endif
 
 @endsection

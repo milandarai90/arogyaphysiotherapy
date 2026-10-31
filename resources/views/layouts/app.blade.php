@@ -117,81 +117,107 @@
         </div>
     </div>
 
-    <!-- Main Navbar -->
-    <nav class="navbar navbar-expand-lg main-navbar sticky-top">
-        <div class="container">
+<!-- Main Navbar -->
+<nav class="navbar navbar-expand-lg main-navbar sticky-top">
+    <div class="container">
 
-            <a class="navbar-brand d-flex align-items-center gap-2"
-               href="{{ route('home') }}">
+        <a class="navbar-brand d-flex align-items-center gap-2"
+           href="{{ route('home') }}">
 
-                <img src="{{ $logoPath ? asset('storage/' . $logoPath) : asset('images/logo.png') }}"
-                     alt="{{ $clinicName }} Logo"
-                     class="brand-logo">
+            <img src="{{ $logoPath ? asset('storage/' . $logoPath) : asset('images/logo.png') }}"
+                 alt="{{ $clinicName }} Logo"
+                 class="brand-logo">
 
-                <div class="brand-text">
-                    <strong>AROGYA</strong>
-                    <small>PHYSIOTHERAPY CENTER</small>
-                </div>
-            </a>
-
-            <button class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#mainNavigation"
-                    aria-controls="mainNavigation"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation">
-
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="mainNavigation">
-
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('home') }}">Home</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('about') }}">About Us</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('services') }}">Services</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('gallery') }}">Gallery</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('blog') }}">Blog</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('contact') }}">Contact</a>
-                    </li>
-
-                    <li class="nav-item">
-    <a class="nav-link {{ request()->routeIs('appointment.status') ? 'active' : '' }}"
-       href="{{ route('appointment.status') }}">
-        Check Appointment
-    </a>
-</li>
-
-                    <li class="nav-item ms-lg-2">
-                        <a href="{{ route('appointment.create') }}"
-                           class="btn btn-book">
-                            Book Appointment
-                            <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
-                    </li>
-
-                </ul>
+            <div class="brand-text">
+                <strong>AROGYA</strong>
+                <small>PHYSIOTHERAPY CENTER</small>
             </div>
+        </a>
+
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#mainNavigation"
+                aria-controls="mainNavigation"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavigation">
+
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+
+                {{-- Home --}}
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
+                       href="{{ route('home') }}">
+                        Home
+                    </a>
+                </li>
+
+                {{-- About Us --}}
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}"
+                       href="{{ route('about') }}">
+                        About Us
+                    </a>
+                </li>
+
+                {{-- Services --}}
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('services') ? 'active' : '' }}"
+                       href="{{ route('services') }}">
+                        Services
+                    </a>
+                </li>
+
+                {{-- Gallery --}}
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('gallery') ? 'active' : '' }}"
+                       href="{{ route('gallery') }}">
+                        Gallery
+                    </a>
+                </li>
+
+                {{-- Blog --}}
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('blog') ? 'active' : '' }}"
+                       href="{{ route('blog') }}">
+                        Blog
+                    </a>
+                </li>
+
+                {{-- Contact --}}
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}"
+                       href="{{ route('contact') }}">
+                        Contact
+                    </a>
+                </li>
+
+                {{-- Check Appointment --}}
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('appointment.status') ? 'active' : '' }}"
+                       href="{{ route('appointment.status') }}">
+                        Check Appointment
+                    </a>
+                </li>
+
+                {{-- Book Appointment --}}
+                <li class="nav-item ms-lg-2">
+                    <a href="{{ route('appointment.create') }}"
+                       class="btn btn-book">
+                        Book Appointment
+                        <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </li>
+
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Main Content -->
     <main>
