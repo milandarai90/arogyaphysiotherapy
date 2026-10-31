@@ -1,79 +1,108 @@
+ @extends('admin.layouts.app')
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Upload Gallery Image | Arogya Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background: #f4f6fb; font-family: Arial, sans-serif; }
-        .page-card { border: 0; border-radius: 12px; }
-    </style>
-</head>
-<body>
-<div class="container py-4">
+@section('title', 'Upload Gallery Image')
 
-    <div class="mb-4">
-        <a href="{{ route('admin.gallery.index') }}" class="text-decoration-none">← Back to Gallery</a>
-        <h3 class="fw-bold mt-3">Upload Gallery Image</h3>
-    </div>
+@section('page-title', 'Upload Gallery Image')
 
-    <div class="card page-card shadow-sm">
-        <div class="card-body p-4">
+@section('page-description', 'Add a new photograph to the clinic gallery.')
 
-            @if($errors->any())
-                <div class="alert alert-danger">
-                    @foreach($errors->all() as $error)
-                        <div>{{ $error }}</div>
-                    @endforeach
-                </div>
-            @endif
+@section('content')
 
-            <form method="POST" action="{{ route('admin.gallery.store') }}" enctype="multipart/form-data">
-                @csrf
+<div class="row justify-content-center">
+    <div class="col-lg-9 col-xl-8">
 
-                <div class="mb-3">
-                    <label class="form-label">Image Title *</label>
-                    <input type="text" name="title" class="form-control"
-                           value="{{ old('title') }}" maxlength="150" required>
-                </div>
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
 
-                <div class="mb-3">
-                    <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control"
-                              rows="3" maxlength="2000">{{ old('description') }}</textarea>
-                </div>
+                <form method="POST" action="{{ route('admin.gallery.store') }}" enctype="multipart/form-data">
+                    @csrf
 
-                <div class="mb-3">
-                    <label class="form-label">Choose Image *</label>
-                    <input type="file" name="image" class="form-control"
-                           accept=".jpg,.jpeg,.png,.webp" required>
-                    <small class="text-muted">JPG, JPEG, PNG or WebP. Maximum size: 5 MB.</small>
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Image Title *</label>
+                        <input type="text"
+                               name="title"
+                               class="form-control @error('title') is-invalid @enderror"
+                               value="{{ old('title') }}"
+                               maxlength="150"
+                               required>
 
-                <div class="mb-3">
-                    <label class="form-label">Display Order</label>
-                    <input type="number" name="sort_order" class="form-control"
-                           min="0" max="99999" value="{{ old('sort_order', 0) }}">
-                    <small class="text-muted">Smaller numbers appear first.</small>
-                </div>
+                        @error('title')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                <div class="form-check mb-4">
-                    <input type="checkbox" name="is_active" value="1"
-                           class="form-check-input" id="is_active"
-                           @checked(old('is_active', true))>
-                    <label class="form-check-label" for="is_active">
-                        Display this image publicly
-                    </label>
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Description</label>
+                        <textarea name="description"
+                                  class="form-control @error('description') is-invalid @enderror"
+                                  rows="4"
+                                  maxlength="2000">{{ old('description') }}</textarea>
 
-                <button class="btn btn-primary">Upload Image</button>
-                <a href="{{ route('admin.gallery.index') }}" class="btn btn-outline-secondary">Cancel</a>
-            </form>
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Choose Image *</label>
+                        <input type="file"
+                               name="image"
+                               class="form-control @error('image') is-invalid @enderror"
+                               accept=".jpg,.jpeg,.png,.webp"
+                               required>
+
+                        <small class="text-muted">JPG, JPEG, PNG or WebP. Maximum size: 5 MB.</small>
+
+                        @error('image')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Display Order</label>
+                        <input type="number"
+                               name="sort_order"
+                               class="form-control @error('sort_order') is-invalid @enderror"
+                               min="0"
+                               max="99999"
+                               value="{{ old('sort_order', 0) }}">
+
+                        <small class="text-muted">Smaller numbers appear first.</small>
+
+                        @error('sort_order')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input type="checkbox"
+                               name="is_active"
+                               value="1"
+                               class="form-check-input"
+                               id="is_active"
+                               @checked(old('is_active', true))>
+
+                        <label class="form-check-label" for="is_active">
+                            Display this image publicly
+                        </label>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload me-1"></i> Upload Image
+                        </button>
+
+                        <a href="{{ route('admin.gallery.index') }}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
         </div>
+
     </div>
 </div>
-</body>
-</html>
+
+@endsection

@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use App\Models\Holiday;
 use App\Models\OperatingHour;
 use App\Models\Service;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -14,6 +15,24 @@ use Carbon\Carbon;
 
 class AppointmentController extends Controller
 {
+    /**
+     * Get the appointment slot interval configured in Website Settings.
+     */
+    private function appointmentSlotInterval(): int
+    {
+        $interval = (int) Setting::where(
+            'key',
+            'appointment_slot_interval'
+        )->value('value');
+
+        // Use 30 minutes if the setting is missing or invalid.
+        if ($interval < 5 || $interval > 180) {
+            return 30;
+        }
+
+        return $interval;
+    }
+
     /**
      * Display the public appointment booking form.
      */
@@ -83,6 +102,8 @@ class AppointmentController extends Controller
             ]);
         }
 
+        $interval = $this->appointmentSlotInterval();
+
         $opening = Carbon::parse($operatingHour->opening_time);
         $closing = Carbon::parse($operatingHour->closing_time);
 
@@ -94,7 +115,7 @@ class AppointmentController extends Controller
 
         $slots = [];
 
-        // Generate slots at 30-minute intervals.
+        // Generate slots using the interval configured by the admin.
         $slot = $opening->copy();
 
         while ($slot->lt($closing)) {
@@ -114,7 +135,7 @@ class AppointmentController extends Controller
                 ];
             }
 
-            $slot->addMinutes(30);
+            $slot->addMinutes($interval);
         }
 
         return response()->json([
@@ -204,13 +225,16 @@ class AppointmentController extends Controller
             ]);
         }
 
-        // Only allow times that match the 30-minute slot interval.
+        // Validate against the interval configured by the admin.
+        $interval = $this->appointmentSlotInterval();
+
         $openingMinutes = Carbon::parse($opening)->hour * 60
             + Carbon::parse($opening)->minute;
 
-        $selectedMinutes = $selectedTime->hour * 60 + $selectedTime->minute;
+        $selectedMinutes = $selectedTime->hour * 60
+            + $selectedTime->minute;
 
-        if (($selectedMinutes - $openingMinutes) % 30 !== 0) {
+        if (($selectedMinutes - $openingMinutes) % $interval !== 0) {
             return back()->withInput()->withErrors([
                 'appointment_time' => 'Please select one of the available appointment slots.',
             ]);

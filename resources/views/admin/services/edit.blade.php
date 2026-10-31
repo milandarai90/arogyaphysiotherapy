@@ -1,80 +1,115 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Edit Service | Arogya Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background: #f4f6fb; font-family: Arial, sans-serif; }
-        .page-card { border: 0; border-radius: 12px; }
-    </style>
-</head>
-<body>
-<div class="container py-4">
-    <div class="mb-4">
-        <a href="{{ route('admin.services.index') }}" class="text-decoration-none">← Back to Services</a>
-        <h3 class="fw-bold mt-3">Edit Service</h3>
-        <p class="text-muted">{{ $service->name }}</p>
-    </div>
+@extends('admin.layouts.app')
 
-    <div class="card page-card shadow-sm">
+@section('title', 'Edit Service')
+@section('page-title', 'Edit Service')
+@section('page-description', 'Update the details for ' . $service->name . '.')
+
+@section('page-actions')
+    <a href="{{ route('admin.services.index') }}" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to Services
+    </a>
+@endsection
+
+@section('content')
+
+    <div class="card table-card">
+        <div class="card-header bg-white border-0 p-3">
+            <h5 class="fw-bold mb-0">Service Information</h5>
+        </div>
+
         <div class="card-body p-4">
-            @if($errors->any())
-                <div class="alert alert-danger">
-                    @foreach($errors->all() as $error)
-                        <div>{{ $error }}</div>
-                    @endforeach
-                </div>
-            @endif
 
             <form method="POST" action="{{ route('admin.services.update', $service) }}">
                 @csrf
                 @method('PUT')
 
                 <div class="mb-3">
-                    <label class="form-label">Service Name *</label>
-                    <input type="text" name="name" class="form-control"
-                           value="{{ old('name', $service->name) }}" maxlength="150" required>
+                    <label class="form-label fw-semibold">Service Name *</label>
+                    <input
+                        type="text"
+                        name="name"
+                        class="form-control @error('name') is-invalid @enderror"
+                        value="{{ old('name', $service->name) }}"
+                        maxlength="150"
+                        required
+                    >
+                    @error('name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control" rows="4"
-                              maxlength="3000">{{ old('description', $service->description) }}</textarea>
+                    <label class="form-label fw-semibold">Description</label>
+                    <textarea
+                        name="description"
+                        class="form-control @error('description') is-invalid @enderror"
+                        rows="4"
+                        maxlength="3000"
+                    >{{ old('description', $service->description) }}</textarea>
+                    @error('description')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Price (NPR)</label>
-                        <input type="number" name="price" class="form-control"
-                               min="0" step="0.01"
-                               value="{{ old('price', $service->price) }}">
+                        <label class="form-label fw-semibold">Price (NPR)</label>
+                        <input
+                            type="number"
+                            name="price"
+                            class="form-control @error('price') is-invalid @enderror"
+                            min="0"
+                            step="0.01"
+                            value="{{ old('price', $service->price) }}"
+                        >
+                        @error('price')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Duration (minutes)</label>
-                        <input type="number" name="duration_minutes" class="form-control"
-                               min="1" max="1440"
-                               value="{{ old('duration_minutes', $service->duration_minutes) }}">
+                        <label class="form-label fw-semibold">Duration (minutes)</label>
+                        <input
+                            type="number"
+                            name="duration_minutes"
+                            class="form-control @error('duration_minutes') is-invalid @enderror"
+                            min="1"
+                            max="1440"
+                            value="{{ old('duration_minutes', $service->duration_minutes) }}"
+                        >
+                        @error('duration_minutes')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
 
                 <div class="form-check mb-4">
-                    <input type="checkbox" name="is_active" value="1"
-                           class="form-check-input" id="is_active"
-                           @checked(old('is_active', $service->is_active))>
+                    <input
+                        type="checkbox"
+                        name="is_active"
+                        value="1"
+                        class="form-check-input"
+                        id="is_active"
+                        @checked(old('is_active', $service->is_active))
+                    >
                     <label class="form-check-label" for="is_active">
                         Active — show this service in the public appointment form
                     </label>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Update Service</button>
-                <a href="{{ route('admin.services.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-save me-1"></i> Update Service
+                    </button>
+
+                    <a href="{{ route('admin.services.index') }}" class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+                </div>
+
             </form>
         </div>
     </div>
-</div>
-</body>
-</html>
+
+@endsection

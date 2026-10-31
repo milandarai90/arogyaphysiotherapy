@@ -1,54 +1,36 @@
-@extends('layouts.app')
+
+@extends('admin.layouts.app')
 
 @section('title', 'Manage Blog')
+@section('page-title', 'Blog Management')
+@section('page-description', 'Create and manage your clinic articles.')
+
+@section('page-actions')
+    <a href="{{ route('admin.blog.create') }}" class="btn btn-primary">
+        <i class="fa-solid fa-plus me-1"></i> Write New Article
+    </a>
+@endsection
 
 @section('content')
-<div class="container py-4">
 
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-        <div>
-            <h2 class="fw-bold mb-1">Blog Management</h2>
-            <p class="text-muted mb-0">Create and manage your clinic articles.</p>
-        </div>
+    {{-- Search and Filters --}}
+    <div class="card table-card mb-4">
+        <div class="card-body p-3">
 
-        <a href="{{ route('admin.blog.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus me-1"></i> Write New Article
-        </a>
-    </div>
-
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
             <form method="GET" action="{{ route('admin.blog.index') }}"
                   class="row g-2 align-items-end">
 
                 <div class="col-md-6">
-                    <label class="form-label">Search articles</label>
+                    <label class="form-label">Search Articles</label>
                     <input type="text" name="search" class="form-control"
                            placeholder="Search by title..."
                            value="{{ request('search') }}">
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label">Publication status</label>
+                    <label class="form-label">Publication Status</label>
                     <select name="status" class="form-select">
-                        <option value="">All articles</option>
+                        <option value="">All Articles</option>
                         <option value="published" @selected(request('status') === 'published')>
                             Published
                         </option>
@@ -59,39 +41,53 @@
                 </div>
 
                 <div class="col-md-3 d-flex gap-2">
-                    <button type="submit" class="btn btn-dark flex-grow-1">
-                        <i class="fas fa-search me-1"></i> Filter
+                    <button type="submit" class="btn btn-primary flex-grow-1">
+                        <i class="fa-solid fa-search me-1"></i> Filter
                     </button>
 
-                    <a href="{{ route('admin.blog.index') }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('admin.blog.index') }}"
+                       class="btn btn-outline-secondary">
                         Reset
                     </a>
                 </div>
+
             </form>
+
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
+    {{-- Blog Articles --}}
+    <div class="card table-card">
+
+        <div class="card-header bg-white border-0 p-3 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">All Articles</h5>
+            <span class="text-muted small">{{ $blogs->total() }} articles</span>
+        </div>
+
+        <div class="card-body p-0">
 
             @if($blogs->count())
+
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table table-hover align-middle mb-0">
+
                         <thead class="table-light">
                             <tr>
-                                <th>Article</th>
+                                <th class="ps-3">Article</th>
                                 <th>Created</th>
                                 <th>Published</th>
                                 <th>Status</th>
-                                <th class="text-end">Actions</th>
+                                <th class="text-end pe-3">Actions</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach($blogs as $blog)
+
                                 <tr>
-                                    <td style="min-width: 220px;">
+                                    <td class="ps-3" style="min-width:250px;">
                                         <div class="d-flex align-items-center gap-3">
+
                                             @if($blog->featured_image)
                                                 <img
                                                     src="{{ asset('storage/' . $blog->featured_image) }}"
@@ -101,7 +97,7 @@
                                             @else
                                                 <div class="bg-light rounded d-flex align-items-center justify-content-center"
                                                      style="width:65px;height:55px;">
-                                                    <i class="fas fa-image text-muted"></i>
+                                                    <i class="fa-solid fa-image text-muted"></i>
                                                 </div>
                                             @endif
 
@@ -109,6 +105,7 @@
                                                 <div class="fw-semibold">{{ $blog->title }}</div>
                                                 <small class="text-muted">{{ $blog->slug }}</small>
                                             </div>
+
                                         </div>
                                     </td>
 
@@ -122,19 +119,19 @@
 
                                     <td>
                                         @if($blog->is_published)
-                                            <span class="badge bg-success">Published</span>
+                                            <span class="badge text-bg-success">Published</span>
                                         @else
-                                            <span class="badge bg-secondary">Draft</span>
+                                            <span class="badge text-bg-secondary">Draft</span>
                                         @endif
                                     </td>
 
-                                    <td class="text-end" style="min-width: 210px;">
+                                    <td class="text-end pe-3" style="min-width:220px;">
                                         <div class="d-flex justify-content-end flex-wrap gap-1">
 
                                             <a href="{{ route('admin.blog.edit', $blog) }}"
                                                class="btn btn-sm btn-outline-primary"
                                                title="Edit">
-                                                <i class="fas fa-edit"></i>
+                                                <i class="fa-solid fa-pen"></i>
                                             </a>
 
                                             <form method="POST"
@@ -154,37 +151,45 @@
                                                 @csrf
                                                 @method('DELETE')
 
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger"
                                                         title="Delete">
-                                                    <i class="fas fa-trash"></i>
+                                                    <i class="fa-solid fa-trash"></i>
                                                 </button>
                                             </form>
 
                                         </div>
                                     </td>
                                 </tr>
+
                             @endforeach
                         </tbody>
+
                     </table>
                 </div>
 
-                <div class="mt-3">
-                    {{ $blogs->links() }}
-                </div>
             @else
+
                 <div class="text-center py-5">
-                    <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+                    <i class="fa-solid fa-newspaper fa-3x text-muted mb-3"></i>
                     <h5>No blog articles found</h5>
                     <p class="text-muted">Start by writing your first article.</p>
 
                     <a href="{{ route('admin.blog.create') }}" class="btn btn-primary">
-                        Write First Article
+                        <i class="fa-solid fa-plus me-1"></i> Write First Article
                     </a>
                 </div>
+
             @endif
 
         </div>
+
+        @if($blogs->hasPages())
+            <div class="card-footer bg-white border-0 p-3">
+                {{ $blogs->withQueryString()->links('pagination::bootstrap-5') }}
+            </div>
+        @endif
+
     </div>
 
-</div>
 @endsection

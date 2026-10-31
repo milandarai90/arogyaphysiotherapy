@@ -1,27 +1,17 @@
-@extends('layouts.app')
+
+@extends('admin.layouts.app')
 
 @section('title', 'Edit Blog Article')
+@section('page-title', 'Edit Article')
+@section('page-description', 'Update your article details and publication status.')
+
+@section('page-actions')
+    <a href="{{ route('admin.blog.index') }}" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to Blog
+    </a>
+@endsection
 
 @section('content')
-<div class="container py-4">
-
-    <div class="mb-4">
-        <a href="{{ route('admin.blog.index') }}" class="text-decoration-none">
-            <i class="fas fa-arrow-left me-1"></i> Back to Blog
-        </a>
-        <h2 class="fw-bold mt-3">Edit Article</h2>
-        <p class="text-muted">Update your article details and publication status.</p>
-    </div>
-
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
 
     <form method="POST"
           action="{{ route('admin.blog.update', $blog) }}"
@@ -29,26 +19,44 @@
         @csrf
         @method('PUT')
 
-        <div class="card border-0 shadow-sm mb-4">
+        {{-- Article Information --}}
+        <div class="card table-card mb-4">
+            <div class="card-header bg-white border-0 p-3">
+                <h5 class="fw-bold mb-0">Article Information</h5>
+            </div>
+
             <div class="card-body p-4">
 
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Article Title *</label>
-                    <input type="text" name="title" class="form-control"
+                    <input type="text" name="title"
+                           class="form-control @error('title') is-invalid @enderror"
                            value="{{ old('title', $blog->title) }}"
                            maxlength="200" required>
+                    @error('title')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Short Description</label>
-                    <textarea name="excerpt" class="form-control" rows="3"
-                              maxlength="500">{{ old('excerpt', $blog->excerpt) }}</textarea>
+                    <textarea name="excerpt"
+                              class="form-control @error('excerpt') is-invalid @enderror"
+                              rows="3" maxlength="500">{{ old('excerpt', $blog->excerpt) }}</textarea>
+                    @error('excerpt')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Article Content *</label>
-                    <textarea name="content" class="form-control" rows="15"
+                    <textarea name="content"
+                              class="form-control @error('content') is-invalid @enderror"
+                              rows="15"
                               required>{{ old('content', $blog->content) }}</textarea>
+                    @error('content')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
@@ -59,41 +67,62 @@
                             <img src="{{ asset('storage/' . $blog->featured_image) }}"
                                  alt="{{ $blog->title }}"
                                  style="max-width:250px;max-height:160px;object-fit:contain;border-radius:8px;">
+                            <div class="small text-muted mt-1">Current featured image</div>
                         </div>
                     @endif
 
-                    <input type="file" name="featured_image" class="form-control"
+                    <input type="file" name="featured_image"
+                           class="form-control @error('featured_image') is-invalid @enderror"
                            accept=".jpg,.jpeg,.png,.webp">
 
                     <small class="text-muted">
                         Upload a new image only if you want to replace the current one. Maximum 5 MB.
                     </small>
+
+                    @error('featured_image')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm mb-4">
+        {{-- SEO Settings --}}
+        <div class="card table-card mb-4">
+            <div class="card-header bg-white border-0 p-3">
+                <h5 class="fw-bold mb-0">SEO Settings</h5>
+            </div>
+
             <div class="card-body p-4">
-                <h5 class="fw-bold mb-3">SEO Settings</h5>
 
                 <div class="mb-3">
                     <label class="form-label fw-semibold">SEO Title</label>
-                    <input type="text" name="meta_title" class="form-control"
+                    <input type="text" name="meta_title"
+                           class="form-control @error('meta_title') is-invalid @enderror"
                            maxlength="200"
                            value="{{ old('meta_title', $blog->meta_title) }}">
+                    @error('meta_title')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label fw-semibold">SEO Description</label>
-                    <textarea name="meta_description" class="form-control" rows="2"
-                              maxlength="300">{{ old('meta_description', $blog->meta_description) }}</textarea>
+                    <textarea name="meta_description"
+                              class="form-control @error('meta_description') is-invalid @enderror"
+                              rows="2" maxlength="300">{{ old('meta_description', $blog->meta_description) }}</textarea>
+                    @error('meta_description')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
+
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm mb-4">
+        {{-- Publishing --}}
+        <div class="card table-card mb-4">
             <div class="card-body p-4">
+
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox"
                            name="is_published" value="1"
@@ -108,12 +137,13 @@
                 <small class="text-muted">
                     Uncheck this to save the article as a draft.
                 </small>
+
             </div>
         </div>
 
         <div class="d-flex flex-wrap gap-2 mb-4">
-            <button type="submit" class="btn btn-primary px-4">
-                <i class="fas fa-save me-1"></i> Update Article
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-save me-1"></i> Update Article
             </button>
 
             <a href="{{ route('admin.blog.index') }}" class="btn btn-outline-secondary">
@@ -122,5 +152,5 @@
         </div>
 
     </form>
-</div>
+
 @endsection
