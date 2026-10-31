@@ -6,8 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#173f78">
 
-    <title>@yield('title', 'Admin Dashboard') | Arogya Admin</title>
-<link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    @php
+        /*
+        |--------------------------------------------------------------------------
+        | Dynamic Clinic Branding
+        |--------------------------------------------------------------------------
+        */
+
+        $clinicName = $siteSettings->get('clinic_name')?->value
+            ?: 'Arogya Physiotherapy Center';
+
+        $clinicShortName = $siteSettings->get('clinic_short_name')?->value
+            ?: 'AROGYA';
+
+        $clinicTagline = $siteSettings->get('clinic_tagline')?->value
+            ?: 'PHYSIOTHERAPY CENTER';
+
+        $logoPath = $siteSettings->get('logo')?->value;
+        $faviconPath = $siteSettings->get('favicon')?->value;
+
+        $logoUrl = $logoPath
+            ? asset('storage/' . $logoPath)
+            : asset('images/logo.png');
+
+        $faviconUrl = $faviconPath
+            ? asset('storage/' . $faviconPath)
+            : $logoUrl;
+    @endphp
+
+    <title>@yield('title', 'Admin Dashboard') | {{ $clinicName }} Admin</title>
+
+    <link rel="icon" href="{{ $faviconUrl }}">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 
@@ -250,9 +280,17 @@
 {{-- Sidebar --}}
 <aside class="admin-sidebar" id="adminSidebar">
 
-    <div class="sidebar-brand">
-        <h4>AROGYA</h4>
-        <small>Physiotherapy Center</small>
+    <div class="sidebar-brand d-flex align-items-center gap-3">
+
+        <img src="{{ $logoUrl }}"
+             alt="{{ $clinicName }} Logo"
+             style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:#fff;padding:3px;">
+
+        <div>
+            <h4>{{ $clinicShortName }}</h4>
+            <small>{{ $clinicTagline }}</small>
+        </div>
+
     </div>
 
     <nav class="sidebar-menu">
@@ -313,10 +351,10 @@
 
         <div class="sidebar-section">Account</div>
 
-<a href="{{ route('admin.profile.edit') }}"
-   class="{{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
-    <i class="fa-solid fa-user-circle"></i> My Profile
-</a>
+        <a href="{{ route('admin.profile.edit') }}"
+           class="{{ request()->routeIs('admin.profile.*') ? 'active' : '' }}">
+            <i class="fa-solid fa-user-circle"></i> My Profile
+        </a>
 
         <div class="sidebar-section">Website</div>
 
@@ -354,39 +392,43 @@
 
             <div>
                 <span class="fw-bold text-dark d-none d-sm-inline">
-                    Arogya Admin Panel
+                    {{ $clinicName }} Admin Panel
                 </span>
+
                 <span class="fw-bold text-dark d-sm-none">
-                    AROGYA
+                    {{ $clinicShortName }}
                 </span>
             </div>
 
         </div>
 
         <div class="d-flex align-items-center gap-3">
+
             <span class="text-muted small d-none d-sm-inline">
                 {{ now()->format('d M Y') }}
             </span>
 
             <div class="d-flex align-items-center gap-2">
-                
-@if(auth()->user()->profile_photo_path)
-    <img
-        src="{{ asset('storage/' . auth()->user()->profile_photo_path) }}"
-        alt="Profile"
-        class="rounded-circle"
-        style="width:36px;height:36px;object-fit:cover;"
-    >
-@else
-    <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center"
-         style="width:36px;height:36px;">
-        <i class="fa-solid fa-user"></i>
-    </div>
-@endif
-               <a href="{{ route('admin.profile.edit') }}"
-   class="fw-semibold small text-dark text-decoration-none">
-    {{ auth()->user()->name }}
-</a>
+
+                @if(auth()->user()->profile_photo_path)
+                    <img
+                        src="{{ asset('storage/' . auth()->user()->profile_photo_path) }}"
+                        alt="Profile"
+                        class="rounded-circle"
+                        style="width:36px;height:36px;object-fit:cover;"
+                    >
+                @else
+                    <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center"
+                         style="width:36px;height:36px;">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                @endif
+
+                <a href="{{ route('admin.profile.edit') }}"
+                   class="fw-semibold small text-dark text-decoration-none">
+                    {{ auth()->user()->name }}
+                </a>
+
             </div>
         </div>
 
@@ -398,7 +440,7 @@
         <div class="page-heading d-flex justify-content-between flex-wrap gap-3">
             <div>
                 <h3>@yield('page-title', 'Dashboard')</h3>
-                <p>@yield('page-description', 'Welcome to Arogya Admin Panel.')</p>
+                <p>@yield('page-description', 'Welcome to ' . $clinicName . ' Admin Panel.')</p>
             </div>
 
             <div>
@@ -439,7 +481,7 @@
     </main>
 
     <footer class="admin-footer">
-        &copy; {{ date('Y') }} Arogya Physiotherapy Center. All rights reserved.
+        &copy; {{ date('Y') }} {{ $clinicName }}. All rights reserved.
     </footer>
 
 </div>

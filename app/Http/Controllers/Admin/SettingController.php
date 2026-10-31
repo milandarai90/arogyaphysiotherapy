@@ -20,8 +20,10 @@ class SettingController extends Controller
     {
         $validated = $request->validate([
 
-            // Clinic information
+            // Clinic branding
             'clinic_name' => ['required', 'string', 'max:255'],
+            'clinic_short_name' => ['nullable', 'string', 'max:100'],
+            'clinic_tagline' => ['nullable', 'string', 'max:150'],
 
             // Contact information
             'phone' => ['nullable', 'string', 'max:30'],
@@ -54,11 +56,18 @@ class SettingController extends Controller
                         ], true)
                         &&
                         (
-                            ($host === 'www.google.com' || $host === 'google.com')
-                            && str_starts_with($path ?? '', '/maps/embed')
+                            (
+                                in_array($host, [
+                                    'www.google.com',
+                                    'google.com',
+                                ], true)
+                                && str_starts_with($path ?? '', '/maps/embed')
+                            )
                             ||
-                            $host === 'maps.google.com'
-                            && str_starts_with($path ?? '', '/maps')
+                            (
+                                $host === 'maps.google.com'
+                                && str_starts_with($path ?? '', '/maps')
+                            )
                         );
 
                     if (!$validGoogleMapsUrl) {
@@ -90,7 +99,7 @@ class SettingController extends Controller
             'threads' => ['nullable', 'url', 'max:255'],
             'viber' => ['nullable', 'string', 'max:100'],
 
-            // Homepage SEO
+            // SEO
             'seo_title' => ['nullable', 'string', 'max:255'],
             'seo_description' => ['nullable', 'string', 'max:500'],
 
@@ -130,7 +139,7 @@ class SettingController extends Controller
             'gallery_heading' => ['nullable', 'string', 'max:255'],
             'blog_heading' => ['nullable', 'string', 'max:255'],
 
-            // Full Services page
+            // Services page
             'services_page_title' => ['nullable', 'string', 'max:255'],
             'services_page_intro' => ['nullable', 'string', 'max:3000'],
 
@@ -149,6 +158,7 @@ class SettingController extends Controller
 
             // Images
             'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'favicon' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'hero_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'about_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'about_page_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
@@ -157,6 +167,7 @@ class SettingController extends Controller
 
         $imageGroups = [
             'logo' => 'general',
+            'favicon' => 'general',
             'hero_image' => 'homepage',
             'about_image' => 'about',
             'about_page_image' => 'about',
@@ -242,38 +253,46 @@ class SettingController extends Controller
                 'contact_page_title',
                 'contact_page_intro',
                 'contact_form_heading',
-            ]) => 'contact',
+            ], true) => 'contact',
 
             in_array($key, [
                 'facebook', 'instagram', 'tiktok', 'youtube',
                 'linkedin', 'twitter', 'threads', 'viber',
-            ]) => 'social',
+            ], true) => 'social',
 
             in_array($key, [
                 'seo_title', 'seo_description',
-            ]) => 'seo',
+            ], true) => 'seo',
 
             in_array($key, [
                 'homepage_heading', 'homepage_intro', 'hero_image',
                 'services_heading', 'gallery_heading', 'blog_heading',
                 'appointment_cta_heading', 'appointment_cta_description',
                 'appointment_cta_button',
-            ]) => 'homepage',
+            ], true) => 'homepage',
 
             in_array($key, [
                 'about_heading', 'about_paragraph_1', 'about_paragraph_2',
                 'about_image', 'about_page_title', 'about_page_intro',
                 'about_story_heading', 'about_story', 'about_mission',
                 'about_vision', 'about_values', 'about_page_image',
-            ]) => 'about',
+            ], true) => 'about',
 
             in_array($key, [
                 'services_page_title', 'services_page_intro',
-            ]) => 'services',
+            ], true) => 'services',
 
             str_starts_with($key, 'why_') => 'why_choose_us',
 
             $key === 'footer_text' => 'footer',
+
+            in_array($key, [
+                'clinic_name',
+                'clinic_short_name',
+                'clinic_tagline',
+                'logo',
+                'favicon',
+            ], true) => 'general',
 
             default => 'general',
         };
