@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,6 +31,75 @@
             ? asset('storage/' . $faviconPath)
             : $logoUrl;
 
+        $brandDisplayMode = $siteSettings->get('brand_display_mode')?->value
+            ?: 'both';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Dynamic Website Theme Colors
+        |--------------------------------------------------------------------------
+        */
+
+        $themeColors = [
+    /* Main Brand Colors */
+    '--primary' => $siteSettings->get('color_primary')?->value ?: '#244A9A',
+    '--primary-dark' => 'color-mix(in srgb, var(--primary) 75%, #000000)',
+
+    '--secondary' => $siteSettings->get('color_secondary')?->value ?: '#D92535',
+    '--secondary-dark' => 'color-mix(in srgb, var(--secondary) 75%, #000000)',
+
+    '--accent' => $siteSettings->get('color_accent')?->value ?: '#FF6B75',
+    '--accent-light' => 'color-mix(in srgb, var(--accent) 35%, #FFFFFF)',
+
+    /* Text */
+    '--heading' => 'var(--primary-dark)',
+    '--text' => '#263449',
+    '--muted' => '#68778B',
+
+    /* Backgrounds */
+    '--light' => '#F5F8FC',
+    '--white' => '#FFFFFF',
+    '--surface' => '#FFFFFF',
+    '--border' => '#E5EAF1',
+
+    /* Dynamic Soft Brand Backgrounds */
+    '--primary-light' => 'color-mix(in srgb, var(--primary) 9%, #FFFFFF)',
+    '--secondary-light' => 'color-mix(in srgb, var(--secondary) 8%, #FFFFFF)',
+
+    /* Hero */
+    '--hero-bg-start' => 'color-mix(in srgb, var(--primary) 3%, #FFFFFF)',
+    '--hero-bg-end' => 'color-mix(in srgb, var(--secondary) 5%, #FFFFFF)',
+    '--hero-glow' => 'color-mix(in srgb, var(--primary) 10%, #FFFFFF)',
+
+    /* Footer */
+    '--footer-bg' => $siteSettings->get('color_footer')?->value ?: '#14294F',
+    '--footer-text' => '#D7E0EF',
+    '--footer-muted' => '#B7C5DC',
+    '--footer-border' => '#405473',
+
+    /* Special Sections */
+    '--emergency-bg' => 'var(--secondary)',
+    '--cta-overlay-start' => 'var(--primary-dark)',
+    '--cta-overlay-end' => 'var(--primary)',
+
+    /* Shadows */
+    '--shadow-navbar' => '0 3px 20px rgba(20, 40, 80, 0.07)',
+    '--shadow-card' => '0 12px 30px color-mix(in srgb, var(--primary) 9%, transparent)',
+    '--shadow-image' => '0 20px 50px color-mix(in srgb, var(--primary) 15%, transparent)',
+];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Dynamic Navbar Background
+        |--------------------------------------------------------------------------
+        */
+
+        $navbarBackground = $siteSettings->get('color_navbar')?->value
+            ?: '#FFFFFF';
+
+
         /*
         |--------------------------------------------------------------------------
         | SEO Settings
@@ -48,6 +116,7 @@
 
         $seoDescription = $siteSettings->get('seo_description')?->value
             ?: $defaultSeoDescription;
+
 
         /*
         |--------------------------------------------------------------------------
@@ -69,15 +138,13 @@
 
     <title>@yield('title', $seoTitle)</title>
 
-    <meta name="description"
-          content="@yield('description', $seoDescription)">
-
+    <meta name="description" content="@yield('description', $seoDescription)">
     <meta name="robots" content="index, follow">
 
     {{-- Favicon --}}
     <link rel="icon" href="{{ $faviconUrl }}">
 
-    {{-- Open Graph / Facebook / Messenger --}}
+    {{-- Open Graph --}}
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:site_name" content="{{ $clinicName }}">
     <meta property="og:title" content="@yield('title', $seoTitle)">
@@ -85,7 +152,7 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:image" content="@yield('og_image', $logoUrl)">
 
-    {{-- Twitter / X --}}
+    {{-- Twitter --}}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('title', $seoTitle)">
     <meta name="twitter:description" content="@yield('description', $seoDescription)">
@@ -105,15 +172,306 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
           rel="stylesheet">
 
-    {{-- Main CSS --}}
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+   <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+{{-- Dynamic Website Theme Colors --}}
+<style>
+    :root {
+        @foreach($themeColors as $variable => $color)
+            {{ $variable }}: {{ $color }};
+        @endforeach
+
+        --navbar-bg: {{ $navbarBackground }};
+        --primary-color: var(--primary);
+        --secondary-color: var(--secondary);
+    }
+</style>
+    {{-- Navbar Branding CSS --}}
+    <style>
+        /*
+        |--------------------------------------------------------------------------
+        | Navbar Layout
+        |--------------------------------------------------------------------------
+        */
+
+        .main-navbar {
+            min-height: 105px;
+            background: var(--navbar-bg) !important;
+        }
+
+        .main-navbar > .container {
+            min-height: 105px;
+            display: flex;
+            align-items: center;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Dynamic Navbar Branding
+        |--------------------------------------------------------------------------
+        */
+
+        .main-navbar .navbar-brand {
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            min-width: 0;
+            max-width: 100%;
+            padding: 8px 0;
+            margin-right: 20px;
+            text-decoration: none;
+            flex-shrink: 1;
+        }
+
+        .main-navbar .brand-logo {
+            display: block;
+            width: auto !important;
+            height: auto !important;
+            max-width: min(280px, 35vw);
+            max-height: 78px;
+            object-fit: contain;
+            object-position: left center;
+            flex-shrink: 1;
+        }
+
+        .main-navbar .brand-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 0;
+            line-height: 1.2;
+        }
+
+        .main-navbar .brand-text strong {
+            display: block;
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--primary) !important;
+        }
+
+        .main-navbar .brand-text small {
+            display: block;
+            margin-top: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            color: #64748b;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Logo Only
+        |--------------------------------------------------------------------------
+        */
+
+        .main-navbar .navbar-brand.logo-only {
+            margin-right: 25px;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Name Only
+        |--------------------------------------------------------------------------
+        */
+
+        .main-navbar .navbar-brand.name-only .brand-text {
+            max-width: 260px;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Both Logo and Name
+        |--------------------------------------------------------------------------
+        */
+
+        .main-navbar .navbar-brand.logo-and-name .brand-logo {
+            max-width: min(180px, 25vw);
+            max-height: 65px;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Navigation Alignment
+        |--------------------------------------------------------------------------
+        */
+
+        .main-navbar .navbar-collapse {
+            min-width: 0;
+        }
+
+        .main-navbar .navbar-nav {
+            align-items: center;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Tablet
+        |--------------------------------------------------------------------------
+        */
+
+        @media (max-width: 1199.98px) {
+            .main-navbar {
+                min-height: 90px;
+            }
+
+            .main-navbar > .container {
+                min-height: 90px;
+            }
+
+            .main-navbar .brand-logo {
+                max-width: min(230px, 30vw);
+                max-height: 68px;
+            }
+
+            .main-navbar .navbar-brand.logo-and-name .brand-logo {
+                max-width: min(150px, 22vw);
+                max-height: 58px;
+            }
+
+            .main-navbar .brand-text strong {
+                font-size: 19px;
+            }
+
+            .main-navbar .brand-text small {
+                font-size: 10px;
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Mobile
+        |--------------------------------------------------------------------------
+        */
+
+        @media (max-width: 991.98px) {
+            .main-navbar {
+                min-height: 82px;
+            }
+
+            .main-navbar > .container {
+                min-height: 82px;
+            }
+
+            .main-navbar .navbar-brand {
+                margin-right: 10px;
+                gap: 9px;
+            }
+
+            .main-navbar .brand-logo {
+                max-width: min(220px, 55vw);
+                max-height: 65px;
+            }
+
+            .main-navbar .navbar-brand.logo-and-name .brand-logo {
+                max-width: min(130px, 32vw);
+                max-height: 55px;
+            }
+
+            .main-navbar .brand-text strong {
+                font-size: 18px;
+            }
+
+            .main-navbar .brand-text small {
+                font-size: 10px;
+            }
+
+            .main-navbar .navbar-collapse {
+                padding-top: 15px;
+                padding-bottom: 15px;
+            }
+
+            .main-navbar .navbar-nav {
+                align-items: stretch;
+                gap: 5px;
+            }
+
+            .main-navbar .navbar-nav .nav-link {
+                padding: 10px 5px;
+            }
+
+            .main-navbar .navbar-nav .btn-book {
+                display: inline-block;
+                margin-top: 8px;
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Small Mobile
+        |--------------------------------------------------------------------------
+        */
+
+        @media (max-width: 575.98px) {
+            .main-navbar {
+                min-height: 75px;
+            }
+
+            .main-navbar > .container {
+                min-height: 75px;
+            }
+
+            .main-navbar .navbar-brand {
+                max-width: calc(100% - 55px);
+            }
+
+            .main-navbar .brand-logo {
+                max-width: min(190px, 55vw);
+                max-height: 55px;
+            }
+
+            .main-navbar .navbar-brand.logo-and-name .brand-logo {
+                max-width: min(105px, 27vw);
+                max-height: 48px;
+            }
+
+            .main-navbar .brand-text strong {
+                font-size: 16px;
+            }
+
+            .main-navbar .brand-text small {
+                font-size: 9px;
+                letter-spacing: 0.7px;
+            }
+
+            .main-navbar .navbar-toggler {
+                flex-shrink: 0;
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Footer Logo
+        |--------------------------------------------------------------------------
+        */
+
+        .footer-brand img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100px;
+            max-height: 65px;
+            object-fit: contain;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Dynamic Footer Background
+        |--------------------------------------------------------------------------
+        */
+
+        .main-footer {
+            background: var(--footer-bg) !important;
+        }
+    </style>
 
     @stack('styles')
 </head>
 
 <body>
 
-    <!-- Top Contact Bar -->
+    {{-- Top Contact Bar --}}
     <div class="top-bar">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -159,21 +517,29 @@
         </div>
     </div>
 
-    <!-- Main Navbar -->
+    {{-- Main Navbar --}}
     <nav class="navbar navbar-expand-lg main-navbar sticky-top">
         <div class="container">
 
-            <a class="navbar-brand d-flex align-items-center gap-2"
+            <a class="navbar-brand
+                {{ $brandDisplayMode === 'logo' ? 'logo-only' : '' }}
+                {{ $brandDisplayMode === 'name' ? 'name-only' : '' }}
+                {{ $brandDisplayMode === 'both' ? 'logo-and-name' : '' }}"
                href="{{ route('home') }}">
 
-                <img src="{{ $logoUrl }}"
-                     alt="{{ $clinicName }} Logo"
-                     class="brand-logo">
+                @if(in_array($brandDisplayMode, ['logo', 'both'], true))
+                    <img src="{{ $logoUrl }}"
+                         alt="{{ $clinicName }} Logo"
+                         class="brand-logo">
+                @endif
 
-                <div class="brand-text">
-                    <strong>{{ $clinicShortName }}</strong>
-                    <small>{{ $clinicTagline }}</small>
-                </div>
+                @if(in_array($brandDisplayMode, ['name', 'both'], true))
+                    <div class="brand-text">
+                        <strong>{{ $clinicShortName }}</strong>
+                        <small>{{ $clinicTagline }}</small>
+                    </div>
+                @endif
+
             </a>
 
             <button class="navbar-toggler"
@@ -191,7 +557,6 @@
 
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
 
-                    {{-- Home --}}
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
                            href="{{ route('home') }}">
@@ -199,7 +564,6 @@
                         </a>
                     </li>
 
-                    {{-- About Us --}}
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}"
                            href="{{ route('about') }}">
@@ -207,7 +571,6 @@
                         </a>
                     </li>
 
-                    {{-- Services --}}
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('services') ? 'active' : '' }}"
                            href="{{ route('services') }}">
@@ -215,7 +578,6 @@
                         </a>
                     </li>
 
-                    {{-- Gallery --}}
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('gallery') ? 'active' : '' }}"
                            href="{{ route('gallery') }}">
@@ -223,7 +585,6 @@
                         </a>
                     </li>
 
-                    {{-- Blog --}}
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('blog') ? 'active' : '' }}"
                            href="{{ route('blog') }}">
@@ -231,7 +592,6 @@
                         </a>
                     </li>
 
-                    {{-- Contact --}}
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}"
                            href="{{ route('contact') }}">
@@ -239,7 +599,6 @@
                         </a>
                     </li>
 
-                    {{-- Check Appointment --}}
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('appointment.status') ? 'active' : '' }}"
                            href="{{ route('appointment.status') }}">
@@ -247,7 +606,6 @@
                         </a>
                     </li>
 
-                    {{-- Book Appointment --}}
                     <li class="nav-item ms-lg-2">
                         <a href="{{ route('appointment.create') }}"
                            class="btn btn-book">
@@ -261,12 +619,12 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
+    {{-- Main Content --}}
     <main>
         @yield('content')
     </main>
 
-    <!-- Emergency Contact Strip -->
+    {{-- Emergency Contact Strip --}}
     <section class="emergency-strip">
         <div class="container">
             <div class="d-flex flex-column flex-md-row
@@ -292,7 +650,7 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    {{-- Footer --}}
     <footer class="main-footer">
         <div class="container">
 
@@ -434,7 +792,7 @@
         </div>
     </footer>
 
-    <!-- Floating Appointment Button -->
+    {{-- Floating Appointment Button --}}
     <a href="{{ route('appointment.create') }}"
        class="floating-book"
        aria-label="Book appointment">
@@ -442,7 +800,7 @@
         <i class="fas fa-calendar-check"></i>
     </a>
 
-    <!-- Bootstrap JS -->
+    {{-- Bootstrap JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     @stack('scripts')

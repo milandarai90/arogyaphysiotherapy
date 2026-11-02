@@ -117,7 +117,6 @@
         box-shadow: 0 2px 8px rgba(15, 23, 42, .07);
     }
 
-    /* Clinic logo */
     .settings-logo-preview {
         width: 120px;
         height: 120px;
@@ -128,7 +127,6 @@
         padding: 8px;
     }
 
-    /* Favicon */
     .settings-favicon-preview {
         width: 64px;
         height: 64px;
@@ -140,7 +138,6 @@
         border-radius: 10px;
     }
 
-    /* Homepage hero image */
     .settings-hero-preview {
         width: 100%;
         max-width: 420px;
@@ -149,7 +146,6 @@
         object-position: center;
     }
 
-    /* Homepage about image */
     .settings-about-preview {
         width: 100%;
         max-width: 320px;
@@ -157,7 +153,6 @@
         object-fit: cover;
     }
 
-    /* About page image */
     .settings-about-page-preview {
         width: 100%;
         max-width: 420px;
@@ -165,7 +160,6 @@
         object-fit: cover;
     }
 
-    /* Why choose us image */
     .settings-why-preview {
         width: 100%;
         max-width: 360px;
@@ -347,23 +341,14 @@
     ];
 
     $savedInterval = (int) ($settings->get('appointment_slot_interval')?->value ?? 30);
-    $standardIntervals = [10, 15, 20, 30, 45, 60];
-    $isCustomInterval = !in_array($savedInterval, $standardIntervals, true);
-@endphp
 
-@if($errors->any())
-    <div class="alert alert-danger">
-        <strong>
-            <i class="fas fa-exclamation-circle me-2"></i>
-            Please correct the following errors:
-        </strong>
-        <ul class="mb-0 mt-2">
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+    $standardIntervals = [10, 15, 20, 30, 45, 60];
+
+    $currentInterval = old('appointment_slot_interval', $savedInterval);
+
+    $isCustomInterval = $currentInterval === 'custom'
+        || !in_array((int) $currentInterval, $standardIntervals, true);
+@endphp
 
 <form action="{{ route('admin.settings.update') }}"
       method="POST"
@@ -383,7 +368,6 @@
 
         <div class="card-body">
 
-            {{-- Clinic Name --}}
             <div class="mb-3">
                 <label class="form-label fw-semibold">
                     Clinic Name <span class="text-danger">*</span>
@@ -400,7 +384,6 @@
                 @enderror
             </div>
 
-            {{-- Short Name and Tagline --}}
             <div class="row g-3 mb-3">
                 <div class="col-md-6">
                     <label for="clinic_short_name" class="form-label fw-semibold">
@@ -444,6 +427,128 @@
                     @error('clinic_tagline')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
+                </div>
+            </div>
+
+            {{-- Public Navbar Branding Display --}}
+            <div class="mb-4">
+                <label for="brand_display_mode" class="form-label fw-semibold">
+                    Public Navbar Branding Display
+                </label>
+
+                <select name="brand_display_mode"
+                        id="brand_display_mode"
+                        class="form-select @error('brand_display_mode') is-invalid @enderror"
+                        required>
+
+                    <option value="both"
+                        {{ $getSetting('brand_display_mode', 'both') === 'both' ? 'selected' : '' }}>
+                        Both Logo and Name
+                    </option>
+
+                    <option value="name"
+                        {{ $getSetting('brand_display_mode', 'both') === 'name' ? 'selected' : '' }}>
+                        Name Only
+                    </option>
+
+                    <option value="logo"
+                        {{ $getSetting('brand_display_mode', 'both') === 'logo' ? 'selected' : '' }}>
+                        Logo Only
+                    </option>
+                </select>
+
+                <small class="text-muted">
+                    Choose how your clinic branding appears in the public website navbar.
+                    This setting does not affect the admin panel or footer.
+                </small>
+
+                @error('brand_display_mode')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            {{-- Website Theme Colors --}}
+            <div class="mb-4">
+                <h6 class="fw-bold text-primary mb-3">
+                    <i class="fas fa-palette me-2"></i>
+                    Website Theme Colors
+                </h6>
+
+                <p class="text-muted small mb-3">
+                    Customize the colors used throughout your public website.
+                    Changes will be applied after saving.
+                </p>
+
+                @php
+                    $themeColors = [
+                        'color_primary' => [
+                            'label' => 'Primary Color',
+                            'default' => '#244A9A',
+                            'description' => 'Main buttons, links and brand elements.',
+                        ],
+                        'color_secondary' => [
+                            'label' => 'Secondary Color',
+                            'default' => '#D92535',
+                            'description' => 'Secondary buttons and supporting elements.',
+                        ],
+                        'color_accent' => [
+                            'label' => 'Accent Color',
+                            'default' => '#FF6B75',
+                            'description' => 'Highlights, badges and decorative elements.',
+                        ],
+                        'color_navbar' => [
+                            'label' => 'Navbar Background',
+                            'default' => '#FFFFFF',
+                            'description' => 'Public website navigation background.',
+                        ],
+                        'color_footer' => [
+                            'label' => 'Footer Background',
+                            'default' => '#14294F',
+                            'description' => 'Public website footer background.',
+                        ],
+                    ];
+                @endphp
+
+                <div class="row g-3">
+                    @foreach($themeColors as $key => $color)
+                        <div class="col-md-6">
+                            <div class="border rounded-3 p-3 h-100">
+                                <label for="{{ $key }}" class="form-label fw-semibold">
+                                    {{ $color['label'] }}
+                                </label>
+
+                                <div class="d-flex align-items-center gap-3">
+                                    <input
+                                        type="color"
+                                        name="{{ $key }}"
+                                        id="{{ $key }}"
+                                        class="form-control form-control-color"
+                                        value="{{ $getSetting($key, $color['default']) }}"
+                                        title="Choose {{ $color['label'] }}"
+                                        style="width: 65px; height: 45px; cursor: pointer;"
+                                    >
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="{{ $key }}_hex"
+                                        value="{{ $getSetting($key, $color['default']) }}"
+                                        maxlength="7"
+                                        pattern="^#[0-9A-Fa-f]{6}$"
+                                        aria-label="{{ $color['label'] }} hex code"
+                                    >
+                                </div>
+
+                                <small class="text-muted d-block mt-2">
+                                    {{ $color['description'] }}
+                                </small>
+
+                                @error($key)
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
 
@@ -1218,9 +1323,10 @@
                             id="appointment_slot_interval"
                             class="form-select @error('appointment_slot_interval') is-invalid @enderror"
                             required>
+
                         @foreach([10, 15, 20, 30, 45, 60] as $minutes)
                             <option value="{{ $minutes }}"
-                                {{ !$isCustomInterval && $savedInterval === $minutes ? 'selected' : '' }}>
+                                {{ !$isCustomInterval && (int) $currentInterval === $minutes ? 'selected' : '' }}>
                                 Every {{ $minutes }} minutes
                             </option>
                         @endforeach
@@ -1238,6 +1344,7 @@
                 <div class="col-md-6 mb-3"
                      id="customIntervalContainer"
                      style="{{ $isCustomInterval ? '' : 'display: none;' }}">
+
                     <label for="appointment_slot_custom" class="form-label fw-semibold">
                         Custom Interval (minutes)
                     </label>
@@ -1246,7 +1353,9 @@
                            name="appointment_slot_custom"
                            id="appointment_slot_custom"
                            class="form-control @error('appointment_slot_custom') is-invalid @enderror"
-                           min="5" max="180" step="1"
+                           min="5"
+                           max="180"
+                           step="1"
                            value="{{ old('appointment_slot_custom', $isCustomInterval ? $savedInterval : 30) }}"
                            placeholder="Enter minutes">
 
@@ -1358,6 +1467,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const customInput = document.getElementById('appointment_slot_custom');
 
     if (intervalSelect && customContainer && customInput) {
+
         function updateCustomIntervalVisibility() {
             const isCustom = intervalSelect.value === 'custom';
 
@@ -1367,6 +1477,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         intervalSelect.addEventListener('change', updateCustomIntervalVisibility);
+
         updateCustomIntervalVisibility();
     }
 
@@ -1376,6 +1487,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const mapPreviewContainer = document.getElementById('googleMapsPreviewContainer');
 
     if (mapUrlInput && mapPreview && mapPreviewContainer) {
+
         mapUrlInput.addEventListener('input', function () {
             const value = this.value.trim();
 
@@ -1403,12 +1515,57 @@ document.addEventListener('DOMContentLoaded', function () {
                     mapPreview.src = 'about:blank';
                     mapPreviewContainer.classList.add('d-none');
                 }
+
             } catch (error) {
                 mapPreview.src = 'about:blank';
                 mapPreviewContainer.classList.add('d-none');
             }
         });
     }
+
+    // Theme color picker and HEX input synchronization
+    document.querySelectorAll('input[type="color"][id^="color_"]').forEach(function (picker) {
+
+        const hexInput = document.getElementById(picker.id + '_hex');
+
+        if (!hexInput) {
+            return;
+        }
+
+        // Color picker -> HEX input
+        picker.addEventListener('input', function () {
+            hexInput.value = picker.value;
+            hexInput.setCustomValidity('');
+        });
+
+        // HEX input -> color picker
+        hexInput.addEventListener('input', function () {
+
+            const value = hexInput.value.trim();
+
+            if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
+                picker.value = value;
+                hexInput.setCustomValidity('');
+            } else {
+                hexInput.setCustomValidity(
+                    'Enter a valid HEX color, for example #244A9A.'
+                );
+            }
+        });
+
+        // Validate before form submission
+        hexInput.addEventListener('blur', function () {
+
+            if (!/^#[0-9A-Fa-f]{6}$/.test(hexInput.value.trim())) {
+                hexInput.setCustomValidity(
+                    'Enter a valid HEX color, for example #244A9A.'
+                );
+            } else {
+                hexInput.setCustomValidity('');
+            }
+        });
+
+    });
 
 });
 </script>

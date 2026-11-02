@@ -1,12 +1,14 @@
 
 @extends('layouts.app')
 
+@section('title', 'Book an Appointment | Arogya Physiotherapy Center')
+
 @section('content')
 
-<section class="section-padding bg-light-custom">
+<section class="section-padding bg-light-custom appointment-create-section">
     <div class="container">
 
-        <div class="section-title">
+        <div class="section-title appointment-page-heading text-center">
             <h2>Book Your Appointment</h2>
             <p>
                 Take the first step towards better movement and a healthier life.
@@ -17,10 +19,10 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
 
-                <div class="service-card">
+                <div class="service-card appointment-form-card">
 
                     @if ($errors->any())
-                        <div class="alert alert-danger">
+                        <div class="alert alert-danger appointment-validation-alert">
                             <strong>Please correct the following errors:</strong>
                             <ul class="mb-0 mt-2">
                                 @foreach ($errors->all() as $error)
@@ -33,7 +35,10 @@
                     <form method="POST" action="{{ route('appointment.store') }}">
                         @csrf
 
-                        <h5 class="mb-4">Patient Information</h5>
+                        <h5 class="appointment-form-heading mb-4">
+                            <i class="fas fa-user me-2"></i>
+                            Patient Information
+                        </h5>
 
                         <div class="row">
 
@@ -103,7 +108,8 @@
                                     @foreach ($services as $service)
                                         <option
                                             value="{{ $service->id }}"
-{{ old('service_id', $selectedServiceId ?? '') == $service->id ? 'selected' : '' }}                                        >
+                                            {{ old('service_id', $selectedServiceId ?? '') == $service->id ? 'selected' : '' }}
+                                        >
                                             {{ $service->name }}
                                         </option>
                                     @endforeach
@@ -121,53 +127,54 @@
 
                         <hr class="my-4">
 
-                        <h5 class="mb-4">Appointment Details</h5>
+                        <h5 class="appointment-form-heading mb-4">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            Appointment Details
+                        </h5>
 
-                       
-<div class="row">
+                        <div class="row">
 
-    <div class="col-md-6 mb-3">
-        <label for="appointment_date" class="form-label">
-            Preferred Date *
-        </label>
+                            <div class="col-md-6 mb-3">
+                                <label for="appointment_date" class="form-label">
+                                    Preferred Date *
+                                </label>
 
-        <input
-            type="date"
-            id="appointment_date"
-            name="appointment_date"
-            class="form-control"
-            value="{{ old('appointment_date') }}"
-            min="{{ now()->toDateString() }}"
-            required
-        >
+                                <input
+                                    type="date"
+                                    id="appointment_date"
+                                    name="appointment_date"
+                                    class="form-control"
+                                    value="{{ old('appointment_date') }}"
+                                    min="{{ now()->toDateString() }}"
+                                    required
+                                >
 
-        <small class="text-muted" id="date-message">
-            Select a date to see available appointment times.
-        </small>
-    </div>
+                                <small class="text-muted appointment-field-message" id="date-message">
+                                    Select a date to see available appointment times.
+                                </small>
+                            </div>
 
-    <div class="col-md-6 mb-3">
-        <label for="appointment_time" class="form-label">
-            Available Time Slots *
-        </label>
+                            <div class="col-md-6 mb-3">
+                                <label for="appointment_time" class="form-label">
+                                    Available Time Slots *
+                                </label>
 
-        <select
-            id="appointment_time"
-            name="appointment_time"
-            class="form-select"
-            required
-            disabled
-        >
-            <option value="">Select a date first</option>
-        </select>
+                                <select
+                                    id="appointment_time"
+                                    name="appointment_time"
+                                    class="form-select"
+                                    required
+                                    disabled
+                                >
+                                    <option value="">Select a date first</option>
+                                </select>
 
-        <small class="text-muted" id="time-message">
-            Available slots will appear here.
-        </small>
-    </div>
+                                <small class="text-muted appointment-field-message" id="time-message">
+                                    Available slots will appear here.
+                                </small>
+                            </div>
 
-</div>
-
+                        </div>
 
                         <div class="mb-3">
                             <label for="symptoms" class="form-label">
@@ -199,7 +206,7 @@
                             >{{ old('patient_message') }}</textarea>
                         </div>
 
-                        <div class="alert alert-info">
+                        <div class="alert alert-info appointment-notice">
                             <i class="fas fa-info-circle me-2"></i>
                             Submitting this form sends an appointment request.
                             Your appointment is not confirmed until the clinic
@@ -208,7 +215,7 @@
 
                         <button
                             type="submit"
-                            class="btn-primary-custom border-0 w-100"
+                            class="btn-primary-custom appointment-submit-button border-0 w-100"
                             @disabled($services->isEmpty())
                         >
                             <i class="fas fa-calendar-check me-2"></i>

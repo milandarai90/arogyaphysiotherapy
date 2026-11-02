@@ -9,14 +9,14 @@
     $homepageHeading = $siteSettings->get('homepage_heading')?->value;
     $homepageIntro = $siteSettings->get('homepage_intro')?->value;
 
-// Emergency contact settings
-$emergencyPhone = $siteSettings->get('emergency_phone')?->value;
-$emergencyDial = preg_replace('/\D/', '', $emergencyPhone ?? '');
+    // Emergency contact settings
+    $emergencyPhone = $siteSettings->get('emergency_phone')?->value;
+    $emergencyDial = preg_replace('/\D/', '', $emergencyPhone ?? '');
 
-$emergencyLabel = $siteSettings->get('emergency_label')?->value
-    ?: 'Emergency Contact';
+    $emergencyLabel = $siteSettings->get('emergency_label')?->value
+        ?: 'Emergency Contact';
 
-$emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
+    $emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
 
     $aboutHeading = $siteSettings->get('about_heading')?->value;
     $aboutParagraph1 = $siteSettings->get('about_paragraph_1')?->value;
@@ -104,26 +104,26 @@ $emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
                     {{ $homepageIntro ?: 'Your journey towards a healthier and pain-free life starts here. Experience personalized physiotherapy and rehabilitation care at Arogya Physiotherapy Center.' }}
                 </p>
 
-               <div class="d-flex flex-wrap gap-3 mt-4">
+                <div class="d-flex flex-wrap gap-3 mt-4">
 
-    <a href="{{ route('appointment.create') }}"
-       class="btn btn-primary-custom">
-        Book An Appointment
-        <i class="fas fa-arrow-right ms-2"></i>
-    </a>
+                    <a href="{{ route('appointment.create') }}"
+                       class="btn btn-primary-custom">
+                        Book An Appointment
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
 
-    <a href="{{ route('appointment.status') }}"
-       class="btn btn-outline-custom">
-        <i class="fas fa-clipboard-check me-2"></i>
-        Check Appointment Status
-    </a>
+                    <a href="{{ route('appointment.status') }}"
+                       class="btn btn-outline-custom">
+                        <i class="fas fa-clipboard-check me-2"></i>
+                        Check Appointment Status
+                    </a>
 
-    <a href="{{ route('services') }}"
-       class="btn btn-outline-custom">
-        Explore Services
-    </a>
+                    <a href="{{ route('services') }}"
+                       class="btn btn-outline-custom">
+                        Explore Services
+                    </a>
 
-</div>
+                </div>
 
                 <div class="hero-features mt-5">
                     <div>
@@ -176,8 +176,7 @@ $emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
     <div class="container">
         <div class="emergency-contact-card">
 
-            <div class="d-flex flex-column flex-md-row
-                        align-items-md-center justify-content-between gap-3">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
 
                 <div class="d-flex align-items-center gap-3">
 
@@ -191,8 +190,7 @@ $emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
                         </h5>
 
                         <p class="mb-0 text-muted">
-                            {{ $emergencyInstructions
-                                ?: 'Contact us directly for urgent enquiries.' }}
+                            {{ $emergencyInstructions ?: 'Contact us directly for urgent enquiries.' }}
                         </p>
                     </div>
 
@@ -414,7 +412,6 @@ $emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
     </div>
 </section>
 
-
 <!-- Our Team Section -->
 @if(isset($therapists) && $therapists->count())
 <section class="team-section section-padding">
@@ -445,12 +442,10 @@ $emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
                             <img
                                 src="{{ asset('storage/'.$therapist->photo) }}"
                                 alt="{{ $therapist->name }}"
-                                class="w-100"
-                                style="height:280px; object-fit:cover;"
+                                class="w-100 team-member-photo"
                                 loading="lazy">
                         @else
-                            <div class="bg-light d-flex align-items-center justify-content-center"
-                                 style="height:280px;">
+                            <div class="team-member-placeholder">
                                 <i class="fas fa-user-md fa-5x text-secondary"></i>
                             </div>
                         @endif
@@ -505,7 +500,6 @@ $emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
 </section>
 @endif
 
-
 <!-- Appointment CTA -->
 <section class="appointment-cta">
     <div class="container text-center">
@@ -530,6 +524,7 @@ $emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
 </section>
 
 <!-- Gallery Preview -->
+<div class="gallery-page">
 <section class="gallery-section section-padding">
     <div class="container">
 
@@ -596,7 +591,7 @@ $emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
 
     </div>
 </section>
-
+</div>
 
 <!-- Operating Hours & Upcoming Holidays -->
 <section class="operating-hours-section section-padding">
@@ -681,8 +676,6 @@ $emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
     </div>
 </section>
 
-
-
 <!-- Patient Testimonials -->
 @if(isset($testimonials) && $testimonials->count())
 <section class="testimonial-section section-padding">
@@ -716,14 +709,12 @@ $emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
                         <div class="d-flex align-items-center gap-3 mt-3">
 
                             @if($testimonial->photo)
-                                <img src="{{ asset('storage/'.$testimonial->photo) }}"
-                                     alt="{{ $testimonial->patient_name }}"
-                                     width="55" height="55"
-                                     class="rounded-circle"
-                                     style="object-fit:cover;">
+                                <img
+                                    src="{{ asset('storage/'.$testimonial->photo) }}"
+                                    alt="{{ $testimonial->patient_name }}"
+                                    class="testimonial-photo">
                             @else
-                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center"
-                                     style="width:55px;height:55px;">
+                                <div class="testimonial-avatar">
                                     <i class="fas fa-user text-secondary"></i>
                                 </div>
                             @endif
@@ -750,7 +741,6 @@ $emergencyInstructions = $siteSettings->get('emergency_instructions')?->value;
     </div>
 </section>
 @endif
-
 
 <!-- Blog Preview -->
 <section class="blog-section section-padding">

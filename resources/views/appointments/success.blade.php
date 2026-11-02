@@ -1,23 +1,23 @@
+
 @extends('layouts.app')
 
 @section('title', 'Appointment Submitted | Arogya Physiotherapy Center')
 
 @section('content')
 
-<section class="section-padding bg-light-custom">
+<section class="section-padding bg-light-custom appointment-success-section">
     <div class="container">
 
         <div class="row justify-content-center">
             <div class="col-lg-7">
 
-                <div class="service-card text-center">
+                <div class="service-card appointment-success-card text-center">
 
-                    <div class="mb-4">
-                        <i class="fas fa-check-circle text-success"
-                           style="font-size: 65px;"></i>
+                    <div class="appointment-success-icon mb-4">
+                        <i class="fas fa-check-circle"></i>
                     </div>
 
-                    <h2 class="text-success mb-3">
+                    <h2 class="appointment-success-title mb-3">
                         Appointment Request Submitted!
                     </h2>
 
@@ -26,17 +26,17 @@
                         Your appointment request has been received successfully.
                     </p>
 
-                    <div class="bg-light rounded p-4 my-4">
+                    <div class="appointment-reference-box my-4">
 
                         <p class="mb-2">Your Booking Reference</p>
 
-                        <h3 class="text-primary fw-bold">
+                        <h3 class="appointment-reference-number fw-bold">
                             {{ $appointment->booking_reference }}
                         </h3>
 
                         <hr>
 
-                        <div class="text-start">
+                        <div class="text-start appointment-success-details">
 
                             <p>
                                 <strong>Patient:</strong>
@@ -81,7 +81,7 @@
 
                     </div>
 
-                    <div class="alert alert-info text-start">
+                    <div class="alert alert-info appointment-success-notice text-start">
                         <i class="fas fa-info-circle me-2"></i>
                         <strong>Important:</strong>
                         Please save your booking reference. You can use it along
@@ -89,7 +89,7 @@
                         appointment has been accepted, rejected, or rescheduled.
                     </div>
 
-                    <p class="text-muted">
+                    <p class="text-muted appointment-success-reminder">
                         Your appointment is currently subject to clinic approval.
                         Please check your appointment status on our website for updates.
                     </p>
@@ -97,12 +97,12 @@
                     <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mt-4">
 
                         <a href="{{ route('appointment.status') }}"
-                           class="btn btn-outline-primary btn-lg">
+                           class="btn btn-outline-primary btn-lg appointment-status-link">
                             <i class="fas fa-clipboard-check me-2"></i>
                             Check Appointment Status
                         </a>
 
-                        <a href="{{ url('/') }}" class="btn-primary-custom">
+                        <a href="{{ url('/') }}" class="btn-primary-custom appointment-home-link">
                             Return to Homepage
                         </a>
 

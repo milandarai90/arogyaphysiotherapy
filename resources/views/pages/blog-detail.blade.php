@@ -1,16 +1,19 @@
+
 @extends('layouts.app')
 
 @section('title', $blog->meta_title ?: $blog->title)
 
 @section('description', $blog->meta_description ?: ($blog->excerpt ?: \Illuminate\Support\Str::limit(strip_tags($blog->content), 155)))
+
 @section('og_type', 'article')
 
 @if($blog->featured_image)
     @section('og_image', asset('storage/' . $blog->featured_image))
 @endif
+
 @section('content')
 
-<section class="py-5 bg-light">
+<section class="blog-detail-section py-5 bg-light">
     <div class="container">
 
         <div class="row justify-content-center">
@@ -25,7 +28,7 @@
                     <div class="mb-4">
                         <span class="text-primary fw-semibold">
                             <i class="far fa-calendar-alt me-1"></i>
-                            {{ $blog->published_at->format('d F Y') }}
+                            {{ $blog->published_at?->format('d F Y') }}
                         </span>
 
                         <h1 class="fw-bold mt-3 mb-3">
@@ -85,7 +88,7 @@
                                     <img
                                         src="{{ asset('storage/' . $related->featured_image) }}"
                                         alt="{{ $related->title }}"
-                                        style="width:100%;height:190px;object-fit:cover;"
+                                        class="related-blog-image"
                                     >
                                 @endif
 
@@ -113,23 +116,5 @@
 
     </div>
 </section>
-
-<style>
-    .article-featured-image {
-        display: block;
-        width: 100%;
-        max-height: 480px;
-        object-fit: contain;
-        background: #f1f5f9;
-        border-radius: 10px;
-    }
-
-    .article-content {
-        font-size: 17px;
-        line-height: 1.9;
-        color: #444;
-        overflow-wrap: anywhere;
-    }
-</style>
 
 @endsection

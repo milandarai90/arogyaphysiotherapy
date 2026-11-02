@@ -17,19 +17,25 @@
     $email = $get('email');
     $address = $get('address', 'Mahendra Hwy, Bhandara, Bagmati Province 44202, Nepal');
     $googleMapsEmbedUrl = $get('google_maps_embed_url');
+
     $formatTime = fn($time) => $time
         ? \Carbon\Carbon::parse($time)->format('h:i A')
         : '';
 @endphp
 
 @section('title', $get('contact_page_title', 'Contact Arogya Physiotherapy Center'))
-@section('description', $get('contact_page_intro', 'Contact Arogya Physiotherapy Center in Bhandara, Nepal, for physiotherapy appointments and enquiries.'))
+
+@section('description', $get(
+    'contact_page_intro',
+    'Contact Arogya Physiotherapy Center in Bhandara, Nepal, for physiotherapy appointments and enquiries.'
+))
 
 @section('content')
 
-<section class="py-5 text-center" style="background:linear-gradient(135deg,#f1f5ff,#fff5f5);">
+{{-- Contact Hero --}}
+<section class="contact-hero py-5 text-center">
     <div class="container py-4">
-        <span class="text-uppercase fw-bold" style="color:#d62828;letter-spacing:2px;">
+        <span class="contact-eyebrow text-uppercase fw-bold">
             Get In Touch
         </span>
 
@@ -37,24 +43,26 @@
             {{ $get('contact_page_title', 'Contact Us') }}
         </h1>
 
-        <p class="lead text-muted mx-auto mt-3" style="max-width:800px;">
+        <p class="lead text-muted mx-auto mt-3 contact-intro">
             {{ $get('contact_page_intro', 'Have questions or need physiotherapy care? We are here to help.') }}
         </p>
     </div>
 </section>
 
-<section class="py-5">
+{{-- Contact Information and Enquiry Form --}}
+<section class="contact-main-section py-5">
     <div class="container">
         <div class="row g-4">
 
-            <!-- Contact Information -->
+            {{-- Contact Information --}}
             <div class="col-lg-5">
                 <h3 class="fw-bold mb-4">Contact Information</h3>
 
-                <!-- Location -->
+                {{-- Location --}}
                 <div class="card border-0 shadow-sm rounded-4 mb-3">
                     <div class="card-body p-4 d-flex gap-3">
-                        <i class="fas fa-map-marker-alt fa-2x" style="color:#2d53cf;"></i>
+                        <i class="fas fa-map-marker-alt fa-2x contact-icon"></i>
+
                         <div>
                             <h5 class="fw-bold">Our Location</h5>
                             <p class="text-muted mb-0">{{ $address }}</p>
@@ -62,13 +70,15 @@
                     </div>
                 </div>
 
-                <!-- Regular Phone -->
+                {{-- Regular Phone --}}
                 @if($phone)
                     <div class="card border-0 shadow-sm rounded-4 mb-3">
                         <div class="card-body p-4 d-flex gap-3">
-                            <i class="fas fa-phone fa-2x" style="color:#2d53cf;"></i>
+                            <i class="fas fa-phone fa-2x contact-icon"></i>
+
                             <div>
                                 <h5 class="fw-bold">Phone</h5>
+
                                 <a href="tel:{{ $phoneDial }}" class="text-decoration-none">
                                     {{ $phone }}
                                 </a>
@@ -77,9 +87,9 @@
                     </div>
                 @endif
 
-                <!-- Emergency Contact -->
+                {{-- Emergency Contact --}}
                 @if($emergencyPhone)
-                    <div class="card border-0 shadow-sm rounded-4 mb-3 border-start border-danger border-4">
+                    <div class="card border-0 shadow-sm rounded-4 mb-3 contact-emergency-card">
                         <div class="card-body p-4">
                             <h5 class="fw-bold text-danger mb-2">
                                 <i class="fas fa-phone-volume me-2"></i>
@@ -101,13 +111,15 @@
                     </div>
                 @endif
 
-                <!-- Email -->
+                {{-- Email --}}
                 @if($email)
                     <div class="card border-0 shadow-sm rounded-4 mb-3">
                         <div class="card-body p-4 d-flex gap-3">
-                            <i class="fas fa-envelope fa-2x" style="color:#2d53cf;"></i>
+                            <i class="fas fa-envelope fa-2x contact-icon"></i>
+
                             <div>
                                 <h5 class="fw-bold">Email</h5>
+
                                 <a href="mailto:{{ $email }}" class="text-decoration-none">
                                     {{ $email }}
                                 </a>
@@ -116,11 +128,13 @@
                     </div>
                 @endif
 
-                <!-- Operating Hours -->
+                {{-- Operating Hours --}}
                 <div class="card border-0 shadow-sm rounded-4 mb-3">
                     <div class="card-body p-4">
+
                         <div class="d-flex gap-3 mb-3">
-                            <i class="fas fa-clock fa-2x" style="color:#2d53cf;"></i>
+                            <i class="fas fa-clock fa-2x contact-icon"></i>
+
                             <div>
                                 <h5 class="fw-bold mb-0">Opening Hours</h5>
                             </div>
@@ -128,10 +142,14 @@
 
                         @forelse($operatingHours as $hour)
                             <div class="d-flex justify-content-between gap-3 py-2 border-bottom">
-                                <span class="fw-semibold">{{ $hour->day_of_week }}</span>
+                                <span class="fw-semibold">
+                                    {{ $hour->day_of_week }}
+                                </span>
 
                                 @if($hour->is_closed)
-                                    <span class="text-danger fw-semibold">Closed</span>
+                                    <span class="text-danger fw-semibold">
+                                        Closed
+                                    </span>
                                 @else
                                     <span class="text-muted text-end">
                                         {{ $formatTime($hour->opening_time) }}
@@ -144,21 +162,25 @@
                                 {{ $get('opening_hours', 'Please contact us for opening hours.') }}
                             </p>
                         @endforelse
+
                     </div>
                 </div>
 
-                <!-- Upcoming Holidays -->
+                {{-- Upcoming Holidays --}}
                 @if($upcomingHolidays->isNotEmpty())
                     <div class="card border-0 shadow-sm rounded-4 mb-3">
                         <div class="card-body p-4">
+
                             <h5 class="fw-bold mb-3">
-                                <i class="fas fa-calendar-alt me-2" style="color:#d62828;"></i>
+                                <i class="fas fa-calendar-alt me-2 contact-holiday-icon"></i>
                                 Upcoming Holidays
                             </h5>
 
                             @foreach($upcomingHolidays as $holiday)
                                 <div class="py-2 border-bottom">
-                                    <div class="fw-semibold">{{ $holiday->title }}</div>
+                                    <div class="fw-semibold">
+                                        {{ $holiday->title }}
+                                    </div>
 
                                     <small class="text-muted">
                                         {{ $holiday->holiday_date->format('d M Y') }}
@@ -171,11 +193,12 @@
                                     @endif
                                 </div>
                             @endforeach
+
                         </div>
                     </div>
                 @endif
 
-                <!-- WhatsApp -->
+                {{-- WhatsApp --}}
                 @if($whatsapp)
                     <a href="https://wa.me/{{ $whatsapp }}"
                        target="_blank"
@@ -185,9 +208,10 @@
                         Chat With Us on WhatsApp
                     </a>
                 @endif
+
             </div>
 
-            <!-- Enquiry Form -->
+            {{-- Enquiry Form --}}
             <div class="col-lg-7">
                 <div class="card border-0 shadow-sm rounded-4">
                     <div class="card-body p-4 p-md-5">
@@ -205,6 +229,7 @@
                         @if($errors->any())
                             <div class="alert alert-danger">
                                 <strong>Please correct the following errors:</strong>
+
                                 <ul class="mb-0 mt-2">
                                     @foreach($errors->all() as $error)
                                         <li>{{ $error }}</li>
@@ -217,47 +242,71 @@
                             @csrf
 
                             <div class="mb-3">
-                                <label class="form-label">Full Name *</label>
-                                <input type="text" name="name"
-                                       class="form-control"
-                                       value="{{ old('name') }}"
-                                       maxlength="150" required>
+                                <label class="form-label">
+                                    Full Name *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="name"
+                                    class="form-control"
+                                    value="{{ old('name') }}"
+                                    maxlength="150"
+                                    required
+                                >
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Email Address</label>
-                                    <input type="email" name="email"
-                                           class="form-control"
-                                           value="{{ old('email') }}"
-                                           maxlength="255">
+
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        class="form-control"
+                                        value="{{ old('email') }}"
+                                        maxlength="255"
+                                    >
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Phone Number</label>
-                                    <input type="tel" name="phone"
-                                           class="form-control"
-                                           value="{{ old('phone') }}"
-                                           maxlength="20"
-                                           placeholder="98XXXXXXXX">
+
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        class="form-control"
+                                        value="{{ old('phone') }}"
+                                        maxlength="20"
+                                        placeholder="98XXXXXXXX"
+                                    >
                                 </div>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Subject</label>
-                                <input type="text" name="subject"
-                                       class="form-control"
-                                       value="{{ old('subject') }}"
-                                       maxlength="200">
+
+                                <input
+                                    type="text"
+                                    name="subject"
+                                    class="form-control"
+                                    value="{{ old('subject') }}"
+                                    maxlength="200"
+                                >
                             </div>
 
                             <div class="mb-4">
-                                <label class="form-label">Your Message *</label>
-                                <textarea name="message"
-                                          class="form-control"
-                                          rows="5"
-                                          maxlength="3000"
-                                          required>{{ old('message') }}</textarea>
+                                <label class="form-label">
+                                    Your Message *
+                                </label>
+
+                                <textarea
+                                    name="message"
+                                    class="form-control"
+                                    rows="5"
+                                    maxlength="3000"
+                                    required
+                                >{{ old('message') }}</textarea>
                             </div>
 
                             <button type="submit"
@@ -265,6 +314,7 @@
                                 <i class="fas fa-paper-plane me-2"></i>
                                 Send Message
                             </button>
+
                         </form>
 
                     </div>
@@ -277,14 +327,14 @@
 
 {{-- Google Maps --}}
 @if($googleMapsEmbedUrl)
-    <section class="pb-5">
+    <section class="contact-map-section pb-5">
         <div class="container">
             <div class="rounded-4 overflow-hidden shadow-sm">
                 <iframe
                     src="{{ $googleMapsEmbedUrl }}"
                     width="100%"
                     height="400"
-                    style="border:0;"
+                    class="contact-map-iframe"
                     allowfullscreen
                     loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade">

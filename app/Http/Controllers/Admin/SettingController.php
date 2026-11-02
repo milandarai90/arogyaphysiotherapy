@@ -24,6 +24,7 @@ class SettingController extends Controller
             'clinic_name' => ['required', 'string', 'max:255'],
             'clinic_short_name' => ['nullable', 'string', 'max:100'],
             'clinic_tagline' => ['nullable', 'string', 'max:150'],
+            'brand_display_mode' => ['required', 'in:name,logo,both'],
 
             // Contact information
             'phone' => ['nullable', 'string', 'max:30'],
@@ -34,6 +35,13 @@ class SettingController extends Controller
             'email' => ['nullable', 'email', 'max:255'],
             'address' => ['nullable', 'string', 'max:500'],
             'opening_hours' => ['nullable', 'string', 'max:500'],
+
+            // Website theme colors
+            'color_primary' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'color_secondary' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'color_accent' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'color_navbar' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'color_footer' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
 
             // Google Maps
             'google_maps_embed_url' => [
@@ -226,9 +234,13 @@ class SettingController extends Controller
                 ]
             );
 
-            if ($oldImage) {
-                Storage::disk('public')->delete($oldImage);
-            }
+           if ($oldImage && $oldImage !== $newPath) {
+    $stillInUse = Setting::where('value', $oldImage)->exists();
+
+    if (!$stillInUse) {
+        Storage::disk('public')->delete($oldImage);
+    }
+}
         }
 
         return redirect()
@@ -292,6 +304,11 @@ class SettingController extends Controller
                 'clinic_tagline',
                 'logo',
                 'favicon',
+                'color_primary',
+                'color_secondary',
+                'color_accent',
+                'color_navbar',
+                'color_footer',
             ], true) => 'general',
 
             default => 'general',

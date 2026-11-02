@@ -1,16 +1,20 @@
+
 @extends('layouts.app')
 
 @section('title', 'Physiotherapy Blog | Arogya Physiotherapy Center')
+
 @section('description', 'Read physiotherapy tips, rehabilitation advice, pain management guidance and health articles from Arogya Physiotherapy Center in Bhandara, Nepal.')
 
 @section('content')
 
-<section class="py-5 bg-light">
+<section class="blog-list-section py-5 bg-light">
     <div class="container">
 
         <div class="text-center mb-5">
             <span class="text-primary fw-semibold">HEALTH & WELLNESS</span>
+
             <h1 class="fw-bold mt-2">Our Blog</h1>
+
             <p class="text-muted">
                 Helpful information, physiotherapy advice and tips for a healthier life.
             </p>
@@ -47,7 +51,7 @@
 
                                 <small class="text-primary fw-semibold">
                                     <i class="far fa-calendar-alt me-1"></i>
-                                    {{ $blog->published_at->format('d M Y') }}
+                                    {{ $blog->published_at?->format('d M Y') }}
                                 </small>
 
                                 <h4 class="fw-bold mt-3 mb-2">
@@ -82,7 +86,9 @@
 
             <div class="text-center py-5">
                 <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+
                 <h4>No articles available yet</h4>
+
                 <p class="text-muted">
                     We're preparing helpful health and physiotherapy articles. Please visit again soon.
                 </p>
@@ -92,35 +98,5 @@
 
     </div>
 </section>
-
-<style>
-    .blog-card {
-        border-radius: 12px;
-        overflow: hidden;
-        transition: transform .25s ease, box-shadow .25s ease;
-    }
-
-    .blog-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 28px rgba(0,0,0,.10) !important;
-    }
-
-    .blog-card-image {
-        display: block;
-        width: 100%;
-        height: 230px;
-        object-fit: cover;
-    }
-
-    .blog-placeholder {
-        height: 230px;
-        background: #eaf0ff;
-        color: #2d53cf;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 55px;
-    }
-</style>
 
 @endsection

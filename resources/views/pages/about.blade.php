@@ -4,18 +4,24 @@
 @php
     $get = fn($key, $default = '') => $siteSettings->get($key)?->value ?: $default;
 
-    $values = preg_split('/\r\n|\r|\n/', $get('about_values'));
+    // Split core values by line safely.
+    $values = preg_split('/\r\n|\r|\n/', $get('about_values')) ?: [];
     $values = array_filter(array_map('trim', $values));
 @endphp
 
 @section('title', $get('about_page_title', 'About Arogya Physiotherapy Center'))
-@section('description', $get('about_page_intro', 'Learn about Arogya Physiotherapy Center and our commitment to quality physiotherapy care.'))
+
+@section('description', $get(
+    'about_page_intro',
+    'Learn about Arogya Physiotherapy Center and our commitment to quality physiotherapy care.'
+))
 
 @section('content')
 
-<section class="py-5" style="background:linear-gradient(135deg,#f1f5ff,#fff5f5);">
+{{-- About Hero --}}
+<section class="about-hero py-5">
     <div class="container text-center py-4">
-        <span class="text-uppercase fw-bold" style="color:#d62828;letter-spacing:2px;">
+        <span class="about-eyebrow text-uppercase fw-bold">
             About Us
         </span>
 
@@ -29,26 +35,27 @@
     </div>
 </section>
 
+{{-- Our Story --}}
 <section class="py-5">
     <div class="container">
         <div class="row align-items-center g-5">
 
             <div class="col-lg-6">
                 @if($get('about_page_image'))
-                    <img src="{{ asset('storage/' . $get('about_page_image')) }}"
-                         class="img-fluid rounded-4 shadow"
-                         alt="Arogya Physiotherapy Center"
-                         style="width:100%;max-height:450px;object-fit:cover;">
+                    <img
+                        src="{{ asset('storage/' . $get('about_page_image')) }}"
+                        class="img-fluid rounded-4 shadow about-main-image"
+                        alt="Arogya Physiotherapy Center"
+                    >
                 @else
-                    <div class="rounded-4 d-flex align-items-center justify-content-center"
-                         style="height:350px;background:#eef2ff;">
-                        <i class="fas fa-heartbeat fa-5x" style="color:#2d53cf;"></i>
+                    <div class="about-image-placeholder rounded-4 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-heartbeat fa-5x"></i>
                     </div>
                 @endif
             </div>
 
             <div class="col-lg-6">
-                <span class="fw-bold text-uppercase" style="color:#d62828;">
+                <span class="about-eyebrow fw-bold text-uppercase">
                     Who We Are
                 </span>
 
@@ -56,7 +63,7 @@
                     {{ $get('about_story_heading', 'Our Story') }}
                 </h2>
 
-                <p class="text-muted" style="line-height:1.9;white-space:pre-line;">
+                <p class="text-muted about-content-text">
                     {{ $get('about_story', 'Arogya Physiotherapy Center is committed to providing quality physiotherapy and rehabilitation services to our community.') }}
                 </p>
             </div>
@@ -65,17 +72,20 @@
     </div>
 </section>
 
-<section class="py-5" style="background:#f7f9fc;">
+{{-- Mission and Vision --}}
+<section class="about-mission-section py-5">
     <div class="container">
         <div class="row g-4">
 
             <div class="col-md-6">
                 <div class="bg-white rounded-4 shadow-sm p-4 h-100">
-                    <div class="mb-3" style="color:#2d53cf;">
+                    <div class="about-icon mb-3">
                         <i class="fas fa-bullseye fa-2x"></i>
                     </div>
+
                     <h3 class="fw-bold">Our Mission</h3>
-                    <p class="text-muted mb-0" style="line-height:1.8;white-space:pre-line;">
+
+                    <p class="text-muted mb-0 about-content-text">
                         {{ $get('about_mission', 'To provide compassionate, effective and accessible physiotherapy care.') }}
                     </p>
                 </div>
@@ -83,11 +93,13 @@
 
             <div class="col-md-6">
                 <div class="bg-white rounded-4 shadow-sm p-4 h-100">
-                    <div class="mb-3" style="color:#d62828;">
+                    <div class="about-icon mb-3">
                         <i class="fas fa-eye fa-2x"></i>
                     </div>
+
                     <h3 class="fw-bold">Our Vision</h3>
-                    <p class="text-muted mb-0" style="line-height:1.8;white-space:pre-line;">
+
+                    <p class="text-muted mb-0 about-content-text">
                         {{ $get('about_vision', 'To build a healthier community where everyone can enjoy better movement and quality of life.') }}
                     </p>
                 </div>
@@ -97,35 +109,41 @@
     </div>
 </section>
 
+{{-- Core Values --}}
 @if(count($values))
 <section class="py-5">
     <div class="container text-center">
-        <span class="fw-bold text-uppercase" style="color:#d62828;">
+
+        <span class="about-eyebrow fw-bold text-uppercase">
             What Guides Us
         </span>
+
         <h2 class="fw-bold mt-2 mb-4">Our Core Values</h2>
 
         <div class="row g-3 justify-content-center">
             @foreach($values as $value)
                 <div class="col-sm-6 col-lg-4">
-                    <div class="p-4 rounded-4 h-100"
-                         style="background:#f1f5ff;">
-                        <i class="fas fa-check-circle mb-3"
-                           style="color:#2d53cf;font-size:28px;"></i>
+                    <div class="about-value-card p-4 rounded-4 h-100">
+                        <i class="fas fa-check-circle mb-3"></i>
                         <h5 class="fw-bold mb-0">{{ $value }}</h5>
                     </div>
                 </div>
             @endforeach
         </div>
+
     </div>
 </section>
 @endif
 
-<section class="py-5 text-white text-center"
-         style="background:linear-gradient(120deg,#2d53cf,#1b347f);">
+{{-- Appointment CTA --}}
+<section class="about-cta py-5 text-white text-center">
     <div class="container">
         <h2 class="fw-bold">Take the First Step Towards Better Health</h2>
-        <p class="mb-4">Let us help you move better and feel better.</p>
+
+        <p class="mb-4">
+            Let us help you move better and feel better.
+        </p>
+
         <a href="{{ route('appointment.create') }}"
            class="btn btn-light btn-lg fw-bold px-4">
             Book an Appointment
@@ -133,14 +151,18 @@
     </div>
 </section>
 
-{{-- Our Team Section --}}
+{{-- Our Team --}}
 @if(isset($therapists) && $therapists->count())
 <section class="py-5">
     <div class="container">
 
         <div class="text-center mb-5">
-            <span class="text-primary fw-semibold text-uppercase">Meet Our Experts</span>
+            <span class="text-primary fw-semibold text-uppercase">
+                Meet Our Experts
+            </span>
+
             <h2 class="fw-bold mt-2">Our Therapists & Team</h2>
+
             <p class="text-muted">
                 Dedicated professionals committed to helping you move better and live healthier.
             </p>
@@ -154,21 +176,20 @@
 
                         @if($therapist->photo)
                             <img
-                                src="{{ asset('storage/'.$therapist->photo) }}"
+                                src="{{ asset('storage/' . $therapist->photo) }}"
                                 alt="{{ $therapist->name }}"
-                                class="w-100"
-                                style="height:280px; object-fit:cover;"
+                                class="w-100 therapist-photo"
                             >
                         @else
-                            <div class="bg-light d-flex align-items-center justify-content-center"
-                                 style="height:280px;">
+                            <div class="bg-light d-flex align-items-center justify-content-center therapist-photo-placeholder">
                                 <i class="fas fa-user-md fa-5x text-secondary"></i>
                             </div>
                         @endif
 
                         <div class="card-body p-4">
-
-                            <h5 class="fw-bold mb-1">{{ $therapist->name }}</h5>
+                            <h5 class="fw-bold mb-1">
+                                {{ $therapist->name }}
+                            </h5>
 
                             @if($therapist->designation)
                                 <div class="text-primary fw-semibold mb-2">
@@ -200,8 +221,8 @@
                                     {{ $therapist->bio }}
                                 </p>
                             @endif
-
                         </div>
+
                     </div>
                 </div>
             @endforeach
@@ -212,3 +233,87 @@
 @endif
 
 @endsection
+
+@push('styles')
+<style>
+    .about-hero {
+        background: linear-gradient(
+            135deg,
+            var(--primary-light),
+            var(--secondary-light)
+        );
+    }
+
+    .about-eyebrow {
+        color: var(--secondary);
+        letter-spacing: 2px;
+    }
+
+    .about-main-image {
+        width: 100%;
+        max-height: 450px;
+        object-fit: cover;
+    }
+
+    .about-image-placeholder {
+        height: 350px;
+        background: var(--primary-light);
+        color: var(--primary);
+    }
+
+    .about-content-text {
+        line-height: 1.9;
+        white-space: pre-line;
+    }
+
+    .about-mission-section {
+        background: var(--light);
+    }
+
+    .about-icon {
+        color: var(--primary);
+    }
+
+    .about-value-card {
+        background: var(--primary-light);
+    }
+
+    .about-value-card i {
+        color: var(--primary);
+        font-size: 28px;
+    }
+
+    .about-cta {
+        background: linear-gradient(
+            120deg,
+            var(--primary),
+            var(--primary-dark)
+        );
+    }
+
+    .therapist-photo,
+    .therapist-photo-placeholder {
+        height: 280px;
+        object-fit: cover;
+    }
+
+    @media (max-width: 767.98px) {
+        .about-hero h1 {
+            font-size: 2rem;
+        }
+
+        .about-main-image {
+            max-height: 320px;
+        }
+
+        .about-image-placeholder {
+            height: 260px;
+        }
+
+        .therapist-photo,
+        .therapist-photo-placeholder {
+            height: 240px;
+        }
+    }
+</style>
+@endpush

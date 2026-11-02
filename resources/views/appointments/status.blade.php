@@ -1,15 +1,17 @@
+
 @extends('layouts.app')
 
 @section('title', 'Check Appointment Status | Arogya Physiotherapy Center')
 
 @section('content')
 
-<section class="py-5">
+<section class="py-5 appointment-status-section">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-7">
 
-                <div class="text-center mb-4">
+                <div class="text-center mb-4 appointment-status-heading">
+                    <span class="appointment-status-eyebrow">APPOINTMENT TRACKING</span>
                     <h1 class="fw-bold">Check Appointment Status</h1>
                     <p class="text-muted">
                         Enter your booking reference and registered phone number
@@ -19,7 +21,7 @@
 
                 @if(!isset($appointment))
 
-                    <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card border-0 shadow-sm rounded-4 appointment-status-card">
                         <div class="card-body p-4 p-md-5">
 
                             @if(session('lookup_error'))
@@ -32,12 +34,13 @@
                                 @csrf
 
                                 <div class="mb-3">
-                                    <label class="form-label fw-semibold">
+                                    <label class="form-label fw-semibold" for="booking_reference">
                                         Booking Reference
                                     </label>
 
                                     <input
                                         type="text"
+                                        id="booking_reference"
                                         name="booking_reference"
                                         class="form-control form-control-lg @error('booking_reference') is-invalid @enderror"
                                         value="{{ old('booking_reference') }}"
@@ -51,14 +54,16 @@
                                 </div>
 
                                 <div class="mb-4">
-                                    <label class="form-label fw-semibold">
+                                    <label class="form-label fw-semibold" for="status_phone">
                                         Registered Phone Number
                                     </label>
 
                                     <input
                                         type="tel"
+                                        id="status_phone"
                                         name="phone"
                                         class="form-control form-control-lg @error('phone') is-invalid @enderror"
+                                        value="{{ old('phone') }}"
                                         placeholder="Enter your 10-digit phone number"
                                         maxlength="10"
                                         pattern="[0-9]{10}"
@@ -71,7 +76,7 @@
                                     @enderror
                                 </div>
 
-                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <button type="submit" class="btn btn-primary btn-lg w-100 appointment-status-submit">
                                     <i class="fas fa-search me-2"></i>
                                     Check Appointment
                                 </button>
@@ -109,12 +114,12 @@
                         ];
                     @endphp
 
-                    <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card border-0 shadow-sm rounded-4 appointment-status-card">
                         <div class="card-body p-4 p-md-5">
 
                             <div class="text-center mb-4">
-                                <div class="mb-3">
-                                    <i class="fas fa-calendar-check fa-3x text-primary"></i>
+                                <div class="appointment-status-icon mb-3">
+                                    <i class="fas fa-calendar-check"></i>
                                 </div>
 
                                 <h3 class="fw-bold">Appointment Details</h3>
@@ -123,14 +128,14 @@
                                     {{ ucfirst($status) }}
                                 </span>
 
-                                <p class="mt-3 mb-0">
+                                <p class="mt-3 mb-0 appointment-status-message">
                                     {{ $statusMessages[$status] ?? 'Please contact the clinic for more information.' }}
                                 </p>
                             </div>
 
                             <hr>
 
-                            <div class="row g-3">
+                            <div class="row g-3 appointment-details-grid">
 
                                 <div class="col-sm-6">
                                     <small class="text-muted">Booking Reference</small>
@@ -185,7 +190,7 @@
                             </div>
 
                             @if($appointment->admin_note)
-                                <div class="alert alert-info mt-4 mb-0">
+                                <div class="alert alert-info appointment-admin-note mt-4 mb-0">
                                     <strong>Message from the clinic:</strong><br>
                                     {{ $appointment->admin_note }}
                                 </div>
@@ -193,7 +198,7 @@
 
                             <div class="text-center mt-4">
                                 <a href="{{ route('appointment.status') }}"
-                                   class="btn btn-outline-primary">
+                                   class="btn btn-outline-primary appointment-another-button">
                                     Check Another Appointment
                                 </a>
                             </div>
