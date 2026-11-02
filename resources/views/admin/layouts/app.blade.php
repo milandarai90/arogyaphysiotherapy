@@ -6,33 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#173f78">
 
-    @php
-        /*
-        |--------------------------------------------------------------------------
-        | Dynamic Clinic Branding
-        |--------------------------------------------------------------------------
-        */
+   @php
+    /*
+    |--------------------------------------------------------------------------
+    | Dynamic Clinic Branding
+    |--------------------------------------------------------------------------
+    */
 
-        $clinicName = $siteSettings->get('clinic_name')?->value
-            ?: 'Arogya Physiotherapy Center';
+    $siteSettings = \App\Models\Setting::all()->keyBy('key');
 
-        $clinicShortName = $siteSettings->get('clinic_short_name')?->value
-            ?: 'AROGYA';
+    $clinicName = $siteSettings->get('clinic_name')?->value
+        ?: 'Arogya Physiotherapy Center';
 
-        $clinicTagline = $siteSettings->get('clinic_tagline')?->value
-            ?: 'PHYSIOTHERAPY CENTER';
+    $clinicShortName = $siteSettings->get('clinic_short_name')?->value
+        ?: 'AROGYA';
 
-        $logoPath = $siteSettings->get('logo')?->value;
-        $faviconPath = $siteSettings->get('favicon')?->value;
+    $clinicTagline = $siteSettings->get('clinic_tagline')?->value
+        ?: 'PHYSIOTHERAPY CENTER';
 
-        $logoUrl = $logoPath
-            ? asset('storage/' . $logoPath)
-            : asset('images/logo.png');
+    $logoPath = $siteSettings->get('logo')?->value;
+    $faviconPath = $siteSettings->get('favicon')?->value;
 
-        $faviconUrl = $faviconPath
-            ? asset('storage/' . $faviconPath)
-            : $logoUrl;
-    @endphp
+    $logoUrl = $logoPath
+        ? asset('storage/' . $logoPath)
+        : asset('images/logo.png');
+
+    $faviconUrl = $faviconPath
+        ? asset('storage/' . $faviconPath)
+        : $logoUrl;
+@endphp
 
     <title>@yield('title', 'Admin Dashboard') | {{ $clinicName }} Admin</title>
 
