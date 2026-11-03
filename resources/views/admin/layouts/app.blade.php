@@ -313,7 +313,10 @@
            class="{{ request()->routeIs('admin.services.*') ? 'active' : '' }}">
             <i class="fa-solid fa-hand-holding-medical"></i> Services
         </a>
-
+<a href="{{ route('admin.branches.index') }}"
+   class="{{ request()->routeIs('admin.branches.*') ? 'active' : '' }}">
+    <i class="fa-solid fa-hospital"></i> Branches
+</a>
         <a href="{{ route('admin.gallery.index') }}"
            class="{{ request()->routeIs('admin.gallery.*') ? 'active' : '' }}">
             <i class="fa-solid fa-images"></i> Gallery

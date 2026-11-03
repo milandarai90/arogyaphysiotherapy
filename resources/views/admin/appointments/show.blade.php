@@ -1,4 +1,3 @@
-
 @extends('admin.layouts.app')
 
 @section('title', 'Appointment Details')
@@ -40,6 +39,82 @@
                 <div class="col-md-6">
                     <label class="text-muted small">Service</label>
                     <div class="fw-semibold">{{ $appointment->service->name ?? 'N/A' }}</div>
+                </div>
+
+                {{-- Branch Information --}}
+                <div class="col-12">
+                    <hr>
+                    <h6 class="fw-bold mb-3">
+                        <i class="fa-solid fa-hospital me-2"></i>
+                        Selected Branch
+                    </h6>
+                </div>
+
+                @if($appointment->branch)
+                    <div class="col-md-6">
+                        <label class="text-muted small">Branch Name</label>
+                        <div class="fw-semibold">
+                            {{ $appointment->branch->name }}
+
+                            @if($appointment->branch->is_main)
+                                <span class="badge text-bg-primary ms-1">Main Branch</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="text-muted small">Branch Phone</label>
+                        <div class="fw-semibold">
+                            @if($appointment->branch->phone)
+                                <a href="tel:{{ $appointment->branch->phone }}">
+                                    {{ $appointment->branch->phone }}
+                                </a>
+                            @else
+                                Not provided
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="text-muted small">Branch Address</label>
+                        <div class="fw-semibold">
+                            {{ $appointment->branch->address ?: 'Not provided' }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="text-muted small">Location</label>
+                        <div class="fw-semibold">
+                            {{ collect([
+                                $appointment->branch->city,
+                                $appointment->branch->district,
+                                $appointment->branch->province
+                            ])->filter()->implode(', ') ?: 'Not provided' }}
+                        </div>
+                    </div>
+
+                    @if($appointment->branch->google_maps_url)
+                        <div class="col-12">
+                            <a href="{{ $appointment->branch->google_maps_url }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="fa-solid fa-location-dot me-1"></i>
+                                View Branch Location
+                            </a>
+                        </div>
+                    @endif
+                @else
+                    <div class="col-12">
+                        <div class="alert alert-secondary mb-0">
+                            No branch was assigned to this appointment.
+                            This may be an appointment created before branch selection was introduced.
+                        </div>
+                    </div>
+                @endif
+
+                <div class="col-12">
+                    <hr>
                 </div>
 
                 <div class="col-md-6">
@@ -164,6 +239,15 @@
                     </div>
 
                     <div class="card-body">
+                         @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
                         <form method="POST"
                               action="{{ route('admin.appointments.reschedule', $appointment) }}">
                             @csrf
@@ -214,5 +298,97 @@
         </div>
 
     @endif
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const dateInput = document.getElementById('rescheduled_date');
+    const timeSelect = document.getElementById('rescheduled_time');
+    const message = document.getElementById('reschedule-slot-message');
+
+    const availabilityUrl = @json(route('admin.appointments.available-slots', $appointment));
+
+    const preferredTime = @json(
+        old(
+            'rescheduled_time',
+            $appointment->rescheduled_time
+                ? \Carbon\Carbon::parse($appointment->rescheduled_time)->format('H:i')
+                : \Carbon\Carbon::parse($appointment->appointment_time)->format('H:i')
+        )
+    );
+
+    async function loadAvailableSlots() {
+        const date = dateInput.value;
+
+        timeSelect.innerHTML = '<option value="">Loading available times...</option>';
+        timeSelect.disabled = true;
+        message.textContent = '';
+
+        if (!date) {
+            timeSelect.innerHTML = '<option value="">Select a date first</option>';
+            message.textContent = 'Available times will appear after selecting a date.';
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                availabilityUrl + '?date=' + encodeURIComponent(date),
+                {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Unable to load available times.');
+            }
+
+            timeSelect.innerHTML = '';
+
+            if (!data.slots || data.slots.length === 0) {
+                timeSelect.innerHTML = '<option value="">No available times</option>';
+                message.textContent = data.message || 'No available slots for this date.';
+                return;
+            }
+
+            timeSelect.innerHTML = '<option value="">Select an available time</option>';
+
+            data.slots.forEach(function (slot) {
+                const option = document.createElement('option');
+                option.value = slot;
+
+                const parts = slot.split(':');
+                let hour = parseInt(parts[0], 10);
+                const minute = parts[1];
+                const period = hour >= 12 ? 'PM' : 'AM';
+
+                hour = hour % 12 || 12;
+
+                option.textContent = hour + ':' + minute + ' ' + period;
+
+                if (slot === preferredTime) {
+                    option.selected = true;
+                }
+
+                timeSelect.appendChild(option);
+            });
+
+            timeSelect.disabled = false;
+            message.textContent = data.slots.length + ' available time(s).';
+
+        } catch (error) {
+            timeSelect.innerHTML = '<option value="">Could not load times</option>';
+            message.textContent = error.message || 'Something went wrong. Please try again.';
+        }
+    }
+
+    dateInput.addEventListener('change', loadAvailableSlots);
+
+    // Load slots for the date already shown when the page opens.
+    loadAvailableSlots();
+});
+</script>
 
 @endsection

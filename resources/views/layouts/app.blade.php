@@ -598,7 +598,12 @@
                             Contact
                         </a>
                     </li>
-
+                    <li class="nav-item">
+    <a class="nav-link {{ request()->routeIs('branches') ? 'active' : '' }}"
+       href="{{ route('branches') }}">
+        Branches
+    </a>
+</li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('appointment.status') ? 'active' : '' }}"
                            href="{{ route('appointment.status') }}">

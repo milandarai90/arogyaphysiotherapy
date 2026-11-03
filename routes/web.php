@@ -4,7 +4,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Models\Gallery;
-
+use App\Http\Controllers\Admin\BranchController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Admin\TestimonialController;
@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Models\Setting;
+use App\Models\Branch;
 use App\Http\Controllers\Admin\OperatingHourController;
 use App\Http\Controllers\Admin\TherapistController;
 use App\Http\Controllers\Admin\ContactMessageController;
@@ -239,6 +240,12 @@ Route::delete('/admin/profile/photo', [ProfileController::class, 'removePhoto'])
 
     Route::patch('/admin/appointments/{appointment}/reschedule', [AdminAppointmentController::class, 'reschedule'])
         ->name('admin.appointments.reschedule');
+        
+Route::get('/admin/appointments/{appointment}/available-slots', [
+    AdminAppointmentController::class,
+    'availableRescheduleSlots'
+])->name('admin.appointments.available-slots');
+
 
 
     // Service Management
@@ -393,6 +400,30 @@ Route::get('/admin/settings', [SettingController::class, 'index'])
 
 Route::put('/admin/settings', [SettingController::class, 'update'])
     ->name('admin.settings.update');
+
+
+    // Branch Management
+Route::get('/admin/branches', [BranchController::class, 'index'])
+    ->name('admin.branches.index');
+
+Route::get('/admin/branches/create', [BranchController::class, 'create'])
+    ->name('admin.branches.create');
+
+Route::post('/admin/branches', [BranchController::class, 'store'])
+    ->name('admin.branches.store');
+
+Route::get('/admin/branches/{branch}/edit', [BranchController::class, 'edit'])
+    ->name('admin.branches.edit');
+
+Route::put('/admin/branches/{branch}', [BranchController::class, 'update'])
+    ->name('admin.branches.update');
+
+Route::patch('/admin/branches/{branch}/toggle-status', [BranchController::class, 'toggleStatus'])
+    ->name('admin.branches.toggle');
+
+Route::delete('/admin/branches/{branch}', [BranchController::class, 'destroy'])
+    ->name('admin.branches.destroy');
+
 });
 
 
@@ -400,3 +431,14 @@ Route::get('/appointment-available-slots', [
     \App\Http\Controllers\AppointmentController::class,
     'availableSlots'
 ])->name('appointment.available-slots');
+
+// Public Branch Locations
+Route::get('/branches', function () {
+    $branches = Branch::where('is_active', true)
+        ->orderByDesc('is_main')
+        ->orderBy('sort_order')
+        ->orderBy('name')
+        ->get();
+
+    return view('pages.branches', compact('branches'));
+})->name('branches');

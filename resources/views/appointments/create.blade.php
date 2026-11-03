@@ -123,6 +123,37 @@
                                 @endif
                             </div>
 
+                            <div class="col-md-6 mb-3">
+    <label for="branch_id" class="form-label">
+        Select Branch *
+    </label>
+
+    <select
+        id="branch_id"
+        name="branch_id"
+        class="form-select"
+        required
+    >
+        <option value="">Select a branch</option>
+
+        @foreach ($branches as $branch)
+            <option
+                value="{{ $branch->id }}"
+                {{ old('branch_id') == $branch->id ? 'selected' : '' }}
+            >
+                {{ $branch->name }}
+                {{ $branch->is_main ? '(Main Branch)' : '' }}
+            </option>
+        @endforeach
+    </select>
+
+    @if ($branches->isEmpty())
+        <small class="text-danger">
+            No branches are currently available for booking.
+        </small>
+    @endif
+</div>
+
                         </div>
 
                         <hr class="my-4">
@@ -216,8 +247,7 @@
                         <button
                             type="submit"
                             class="btn-primary-custom appointment-submit-button border-0 w-100"
-                            @disabled($services->isEmpty())
-                        >
+@disabled($services->isEmpty() || $branches->isEmpty())                        >
                             <i class="fas fa-calendar-check me-2"></i>
                             Submit Appointment Request
                         </button>
@@ -234,6 +264,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const branchInput = document.getElementById('branch_id');
     const dateInput = document.getElementById('appointment_date');
     const timeSelect = document.getElementById('appointment_time');
     const dateMessage = document.getElementById('date-message');
@@ -242,22 +273,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const oldTime = @json(old('appointment_time'));
 
     function resetSlots(message) {
-        timeSelect.innerHTML = '<option value="">Select a date first</option>';
+        timeSelect.innerHTML = '<option value="">Select a date and branch first</option>';
         timeSelect.disabled = true;
         timeMessage.textContent = message;
     }
 
     async function loadSlots() {
+        const branchId = branchInput.value;
         const date = dateInput.value;
 
-        if (!date) {
-            resetSlots('Available slots will appear here.');
+        if (!branchId || !date) {
+            resetSlots('Select a branch and date to see available times.');
             return;
         }
 
         timeSelect.innerHTML = '<option value="">Loading available times...</option>';
         timeSelect.disabled = true;
-        dateMessage.textContent = 'Checking clinic availability...';
+        dateMessage.textContent = 'Checking branch availability...';
         timeMessage.textContent = 'Please wait...';
 
         try {
@@ -266,6 +298,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.location.origin
             );
 
+            url.searchParams.set('branch_id', branchId);
             url.searchParams.set('date', date);
 
             const response = await fetch(url, {
@@ -286,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 timeSelect.innerHTML = '<option value="">No available slots</option>';
                 timeSelect.disabled = true;
                 dateMessage.textContent = data.message;
-                timeMessage.textContent = 'Please select another date.';
+                timeMessage.textContent = 'Please select another date or branch.';
                 return;
             }
 
@@ -305,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             timeSelect.disabled = false;
-            dateMessage.textContent = 'Clinic is open on this date.';
+            dateMessage.textContent = 'This branch is open on this date.';
             timeMessage.textContent = data.message;
 
         } catch (error) {
@@ -315,9 +348,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    branchInput.addEventListener('change', loadSlots);
     dateInput.addEventListener('change', loadSlots);
 
-    if (dateInput.value) {
+    if (branchInput.value && dateInput.value) {
         loadSlots();
     }
 });

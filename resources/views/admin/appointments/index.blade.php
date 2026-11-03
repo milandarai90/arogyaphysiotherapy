@@ -1,4 +1,3 @@
-
 @extends('admin.layouts.app')
 
 @section('title', 'Appointments')
@@ -67,6 +66,7 @@
                             <th class="ps-3">Reference</th>
                             <th>Patient</th>
                             <th>Phone</th>
+                            <th>Branch</th>
                             <th>Service</th>
                             <th>Appointment Date</th>
                             <th>Time</th>
@@ -98,6 +98,20 @@
 
                                 <td>{{ $appointment->phone }}</td>
 
+                                <td>
+                                    @if($appointment->branch)
+                                        <div class="fw-semibold">
+                                            {{ $appointment->branch->name }}
+                                        </div>
+
+                                        @if($appointment->branch->is_main)
+                                            <span class="badge text-bg-primary">Main Branch</span>
+                                        @endif
+                                    @else
+                                        <span class="text-muted">Not assigned</span>
+                                    @endif
+                                </td>
+
                                 <td>{{ $appointment->service->name ?? 'N/A' }}</td>
 
                                 <td>
@@ -125,7 +139,7 @@
                         @empty
 
                             <tr>
-                                <td colspan="8" class="text-center py-5 text-muted">
+                                <td colspan="9" class="text-center py-5 text-muted">
                                     <i class="fa-regular fa-calendar-xmark fa-2x mb-2"></i>
                                     <p class="mb-0">No appointments found.</p>
                                 </td>

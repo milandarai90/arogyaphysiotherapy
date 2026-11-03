@@ -1,311 +1,220 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Appointment;
+use App\Models\Branch;
 use App\Models\Holiday;
-use App\Models\OperatingHour;
-use App\Models\Service;
 use App\Models\Setting;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Carbon\Carbon;
 
 class AppointmentController extends Controller
 {
-    /**
-     * Get the appointment slot interval configured in Website Settings.
-     */
-    private function appointmentSlotInterval(): int
+    public function index(Request $request)
     {
-        $interval = (int) Setting::where(
-            'key',
-            'appointment_slot_interval'
-        )->value('value');
+        $query = Appointment::with(['service', 'branch'])->latest();
 
-        // Use 30 minutes if the setting is missing or invalid.
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+
+            $query->where(function ($q) use ($search) {
+                $q->where('patient_name', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('booking_reference', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $appointments = $query->paginate(15)->withQueryString();
+
+        return view('admin.appointments.index', compact('appointments'));
+    }
+
+    public function show(Appointment $appointment)
+    {
+        $appointment->load(['service', 'branch']);
+
+        return view('admin.appointments.show', compact('appointment'));
+    }
+
+    public function updateStatus(Request $request, Appointment $appointment)
+    {
+        $validated = $request->validate([
+            'status' => [
+                'required',
+                Rule::in(['approved', 'rejected', 'completed', 'cancelled']),
+            ],
+            'admin_note' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        if (in_array($appointment->status, ['completed', 'cancelled'], true)) {
+            return back()->with('error', 'Completed or cancelled appointments cannot be changed.');
+        }
+
+        $appointment->update([
+            'status' => $validated['status'],
+            'admin_note' => $validated['admin_note'] ?? null,
+            'rescheduled_date' => null,
+            'rescheduled_time' => null,
+        ]);
+
+        return redirect()
+            ->route('admin.appointments.show', $appointment)
+            ->with('success', 'Appointment status updated successfully.');
+    }
+
+    public function reschedule(Request $request, Appointment $appointment)
+    {
+        if (in_array($appointment->status, ['completed', 'cancelled', 'rejected'], true)) {
+            return back()->with('error', 'This appointment cannot be rescheduled.');
+        }
+
+        if (!$appointment->branch_id) {
+            return back()->with(
+                'error',
+                'This appointment has no assigned branch. It cannot be rescheduled until a branch is assigned.'
+            );
+        }
+
+        $validated = $request->validate([
+            'rescheduled_date' => ['required', 'date', 'after_or_equal:today'],
+            'rescheduled_time' => ['required', 'date_format:H:i'],
+            'admin_note' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $date = Carbon::parse($validated['rescheduled_date']);
+        $time = $validated['rescheduled_time'];
+
+        // Do not allow a past time when rescheduling for today.
+        $requestedDateTime = Carbon::createFromFormat(
+            'Y-m-d H:i',
+            $date->format('Y-m-d') . ' ' . $time
+        );
+
+        if ($requestedDateTime->lte(now())) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'rescheduled_time' => 'Please select a future appointment date and time.',
+                ]);
+        }
+
+        $interval = (int) Setting::where('key', 'appointment_slot_interval')->value('value');
+
         if ($interval < 5 || $interval > 180) {
-            return 30;
+            $interval = 30;
         }
 
-        return $interval;
-    }
-
-    /**
-     * Display the public appointment booking form.
-     */
-    public function create(Request $request)
-    {
-        $services = Service::where('is_active', true)
-            ->orderBy('name')
-            ->get();
-
-        $selectedService = $request->query('service');
-        $selectedServiceId = null;
-
-        if ($selectedService && filter_var($selectedService, FILTER_VALIDATE_INT)) {
-            $validService = $services->firstWhere('id', (int) $selectedService);
-
-            if ($validService) {
-                $selectedServiceId = $validService->id;
-            }
-        }
-
-        return view('appointments.create', compact(
-            'services',
-            'selectedServiceId'
-        ));
-    }
-
-    /**
-     * Return available time slots for a selected date.
-     */
-    public function availableSlots(Request $request)
-    {
-        $validated = $request->validate([
-            'date' => ['required', 'date', 'after_or_equal:today'],
-        ]);
-
-        $date = Carbon::parse($validated['date']);
-        $dayName = $date->format('l');
-
-        $operatingHour = OperatingHour::where('day_of_week', $dayName)
-            ->first();
-
-        if (!$operatingHour || $operatingHour->is_closed) {
-            return response()->json([
-                'available' => false,
-                'message' => 'The clinic is closed on this day.',
-                'slots' => [],
-            ]);
-        }
-
-        $holiday = Holiday::whereDate('holiday_date', $date->toDateString())
-            ->where('is_closed', true)
-            ->first();
-
-        if ($holiday) {
-            return response()->json([
-                'available' => false,
-                'message' => 'The clinic is closed due to ' . $holiday->title . '.',
-                'slots' => [],
-            ]);
-        }
-
-        if (!$operatingHour->opening_time || !$operatingHour->closing_time) {
-            return response()->json([
-                'available' => false,
-                'message' => 'Appointment hours are not configured for this day.',
-                'slots' => [],
-            ]);
-        }
-
-        $interval = $this->appointmentSlotInterval();
-
-        $opening = Carbon::parse($operatingHour->opening_time);
-        $closing = Carbon::parse($operatingHour->closing_time);
-
-        $bookedTimes = Appointment::whereDate('appointment_date', $date->toDateString())
-            ->whereNotIn('status', ['rejected', 'cancelled'])
-            ->pluck('appointment_time')
-            ->map(fn ($time) => Carbon::parse($time)->format('H:i'))
-            ->all();
-
-        $slots = [];
-
-        // Generate slots using the interval configured by the admin.
-        $slot = $opening->copy();
-
-        while ($slot->lt($closing)) {
-            $time = $slot->format('H:i');
-
-            $slotDateTime = Carbon::parse(
-                $date->toDateString() . ' ' . $time
-            );
-
-            if (
-                !in_array($time, $bookedTimes, true) &&
-                $slotDateTime->greaterThan(now())
+        try {
+            DB::transaction(function () use (
+                $appointment,
+                $validated,
+                $date,
+                $time,
+                $interval
             ) {
-                $slots[] = [
-                    'value' => $time,
-                    'label' => $slot->format('h:i A'),
-                ];
-            }
+                // Lock the branch row while checking and saving the new slot.
+                $branch = Branch::whereKey($appointment->branch_id)
+                    ->lockForUpdate()
+                    ->first();
 
-            $slot->addMinutes($interval);
-        }
+                if (!$branch || !$branch->is_active) {
+                    throw new \RuntimeException(
+                        'The assigned branch is unavailable or inactive. The appointment cannot be rescheduled.'
+                    );
+                }
 
-        return response()->json([
-            'available' => count($slots) > 0,
-            'message' => count($slots) > 0
-                ? 'Please select an available time.'
-                : 'No appointment slots are available on this date.',
-            'slots' => $slots,
-        ]);
-    }
+                // Check the branch's weekly schedule.
+                $workingDays = $branch->working_days ?? [];
+                $dayName = $date->format('l');
+                $daySchedule = $workingDays[$dayName] ?? null;
 
-    /**
-     * Store a new appointment.
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'patient_name' => ['required', 'string', 'max:150'],
-            'phone' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s]{7,20}$/'],
-            'age' => ['required', 'integer', 'min:1', 'max:120'],
+                if (
+                    !$daySchedule ||
+                    !empty($daySchedule['is_closed']) ||
+                    empty($daySchedule['open']) ||
+                    empty($daySchedule['close'])
+                ) {
+                    throw new \RuntimeException(
+                        "The selected branch is closed on {$dayName}. Please choose another date."
+                    );
+                }
 
-            'service_id' => [
-                'required',
-                'integer',
-                Rule::exists('services', 'id')->where('is_active', true),
-            ],
+                $openingTime = Carbon::createFromFormat('H:i', $daySchedule['open']);
+                $closingTime = Carbon::createFromFormat('H:i', $daySchedule['close']);
+                $selectedTime = Carbon::createFromFormat('H:i', $time);
 
-            'appointment_date' => [
-                'required',
-                'date',
-                'after_or_equal:today',
-            ],
+                if (
+                    $selectedTime->lt($openingTime) ||
+                    $selectedTime->gte($closingTime)
+                ) {
+                    throw new \RuntimeException(
+                        'The selected time is outside this branch’s opening hours.'
+                    );
+                }
 
-            'appointment_time' => [
-                'required',
-                'date_format:H:i',
-            ],
+                // Ensure the selected time matches the configured appointment interval.
+                $minutesFromOpening = ($openingTime->hour * 60 + $openingTime->minute);
+                $selectedMinutes = ($selectedTime->hour * 60 + $selectedTime->minute);
 
-            'symptoms' => ['nullable', 'string', 'max:2000'],
-            'patient_message' => ['nullable', 'string', 'max:2000'],
-        ]);
+                if (($selectedMinutes - $minutesFromOpening) % $interval !== 0) {
+                    throw new \RuntimeException(
+                        "Please select a time that matches the {$interval}-minute appointment interval."
+                    );
+                }
 
-        $appointmentDate = Carbon::parse($validated['appointment_date']);
-        $dayName = $appointmentDate->format('l');
+                // Holidays apply to all branches.
+                $isHoliday = Holiday::whereDate('date', $date->format('Y-m-d'))->exists();
 
-        $operatingHour = OperatingHour::where('day_of_week', $dayName)
-            ->first();
+                if ($isHoliday) {
+                    throw new \RuntimeException(
+                        'The selected date is marked as a holiday. Please choose another date.'
+                    );
+                }
 
-        if (!$operatingHour || $operatingHour->is_closed) {
-            return back()->withInput()->withErrors([
-                'appointment_date' => 'The clinic is closed on the selected day. Please choose another date.',
-            ]);
-        }
+                // Check both original and previously rescheduled slots of other appointments.
+                $conflictExists = Appointment::where('branch_id', $branch->id)
+                    ->where('id', '!=', $appointment->id)
+                    ->whereNotIn('status', ['rejected', 'cancelled'])
+                    ->where(function ($query) use ($date, $time) {
+                        $query->where(function ($original) use ($date, $time) {
+                            $original->whereDate('appointment_date', $date->format('Y-m-d'))
+                                ->whereTime('appointment_time', $time);
+                        })->orWhere(function ($rescheduled) use ($date, $time) {
+                            $rescheduled->whereDate('rescheduled_date', $date->format('Y-m-d'))
+                                ->whereTime('rescheduled_time', $time);
+                        });
+                    })
+                    ->exists();
 
-        $holiday = Holiday::whereDate(
-            'holiday_date',
-            $appointmentDate->toDateString()
-        )->where('is_closed', true)->first();
+                if ($conflictExists) {
+                    throw new \RuntimeException(
+                        'This time slot is already booked at the selected branch. Please choose another time.'
+                    );
+                }
 
-        if ($holiday) {
-            return back()->withInput()->withErrors([
-                'appointment_date' => 'The clinic is closed on this date due to ' . $holiday->title . '.',
-            ]);
-        }
-
-        if (!$operatingHour->opening_time || !$operatingHour->closing_time) {
-            return back()->withInput()->withErrors([
-                'appointment_time' => 'Appointment hours are not configured for this day.',
-            ]);
-        }
-
-        $selectedTime = Carbon::createFromFormat(
-            'H:i',
-            $validated['appointment_time']
-        );
-
-        $opening = Carbon::parse($operatingHour->opening_time)->format('H:i');
-        $closing = Carbon::parse($operatingHour->closing_time)->format('H:i');
-        $selectedTimeString = $selectedTime->format('H:i');
-
-        if (
-            $selectedTimeString < $opening ||
-            $selectedTimeString >= $closing
-        ) {
-            return back()->withInput()->withErrors([
-                'appointment_time' => "Please select a time between {$opening} and {$closing}.",
-            ]);
-        }
-
-        // Validate against the interval configured by the admin.
-        $interval = $this->appointmentSlotInterval();
-
-        $openingMinutes = Carbon::parse($opening)->hour * 60
-            + Carbon::parse($opening)->minute;
-
-        $selectedMinutes = $selectedTime->hour * 60
-            + $selectedTime->minute;
-
-        if (($selectedMinutes - $openingMinutes) % $interval !== 0) {
-            return back()->withInput()->withErrors([
-                'appointment_time' => 'Please select one of the available appointment slots.',
-            ]);
-        }
-
-        $selectedDateTime = Carbon::parse(
-            $validated['appointment_date'] . ' ' . $validated['appointment_time']
-        );
-
-        if ($selectedDateTime->lessThanOrEqualTo(now())) {
-            return back()->withInput()->withErrors([
-                'appointment_time' => 'Please select a future appointment time.',
-            ]);
-        }
-
-        $appointment = DB::transaction(function () use ($validated) {
-            // Recheck the slot inside the transaction.
-            $alreadyBooked = Appointment::whereDate(
-                'appointment_date',
-                $validated['appointment_date']
-            )
-                ->whereTime('appointment_time', $validated['appointment_time'])
-                ->whereNotIn('status', ['rejected', 'cancelled'])
-                ->lockForUpdate()
-                ->exists();
-
-            if ($alreadyBooked) {
-                return null;
-            }
-
-            do {
-                $reference = 'ARO-' . now()->format('Ymd') . '-' .
-                    Str::upper(Str::random(5));
-            } while (
-                Appointment::where('booking_reference', $reference)->exists()
-            );
-
-            return Appointment::create([
-                'booking_reference' => $reference,
-                'patient_name' => $validated['patient_name'],
-                'phone' => $validated['phone'],
-                'age' => $validated['age'],
-                'service_id' => $validated['service_id'],
-                'appointment_date' => $validated['appointment_date'],
-                'appointment_time' => $validated['appointment_time'],
-                'symptoms' => $validated['symptoms'] ?? null,
-                'patient_message' => $validated['patient_message'] ?? null,
-                'status' => 'pending',
-            ]);
-        });
-
-        if (!$appointment) {
-            return back()->withInput()->withErrors([
-                'appointment_time' => 'This time slot has just been booked. Please select another time.',
-            ]);
+                $appointment->update([
+                    'status' => 'rescheduled',
+                    'rescheduled_date' => $validated['rescheduled_date'],
+                    'rescheduled_time' => $time,
+                    'admin_note' => $validated['admin_note'] ?? null,
+                ]);
+            });
+        } catch (\RuntimeException $exception) {
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
         return redirect()
-            ->route('appointment.success', $appointment->booking_reference)
-            ->with('success', 'Your appointment request has been submitted.');
-    }
-
-    /**
-     * Display the booking confirmation.
-     */
-    public function success(string $reference)
-    {
-        $appointment = Appointment::with('service')
-            ->where('booking_reference', $reference)
-            ->firstOrFail();
-
-        return view('appointments.success', compact('appointment'));
+            ->route('admin.appointments.show', $appointment)
+            ->with('success', 'Appointment rescheduled successfully.');
     }
 }

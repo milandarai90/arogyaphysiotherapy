@@ -13,6 +13,7 @@ class Appointment extends Model
         'phone',
         'age',
         'service_id',
+        'branch_id',
         'appointment_date',
         'appointment_time',
         'symptoms',
@@ -34,5 +35,10 @@ class Appointment extends Model
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 }
