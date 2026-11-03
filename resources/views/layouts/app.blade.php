@@ -779,20 +779,34 @@
 
             <hr>
 
-            <div class="footer-bottom d-flex flex-column
-                        flex-md-row justify-content-between gap-2">
+            <hr>
 
-                <p class="mb-0">
-                    © {{ date('Y') }} {{ $clinicName }}.
-                    All Rights Reserved.
-                </p>
+<div class="footer-bottom d-flex flex-column
+            flex-md-row justify-content-between align-items-center gap-3">
 
-                <p class="mb-0">
-                    Designed with <i class="fas fa-heart text-danger"></i>
-                    for better healthcare.
-                </p>
+    <p class="mb-0">
+        © {{ date('Y') }} {{ $clinicName }}.
+        All Rights Reserved.
+    </p>
 
-            </div>
+    <p class="mb-0">
+        <i class="fas fa-eye me-1"></i>
+        Website Visitors:
+        <strong>{{ number_format($publicTotalVisits ?? 0) }}</strong>
+    </p>
+
+</div>
+
+<div class="footer-attribution">
+    <span>
+        Powered by
+        <a href="https://YOUR-WEBSITE-URL.com"
+           target="_blank"
+           rel="noopener noreferrer">
+            IFTN
+        </a>
+    </span>
+</div>
 
         </div>
     </footer>
