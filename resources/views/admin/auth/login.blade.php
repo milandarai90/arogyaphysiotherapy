@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#173f78">
 
-    <title>Admin Login | Arogya Physiotherapy Center</title>
+    <title>Admin Login | Aarogya Physiotherapy Center</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
@@ -141,7 +141,7 @@
                 <i class="fa-solid fa-heart-pulse"></i>
             </div>
 
-            <h1 class="brand-name">AROGYA</h1>
+            <h1 class="brand-name">AAROGYA</h1>
 
             <h5 class="fw-bold mb-1">Admin Login</h5>
 
@@ -238,7 +238,7 @@
     </div>
 
     <div class="login-footer">
-        &copy; {{ date('Y') }} Arogya Physiotherapy Center. All rights reserved.
+        &copy; {{ date('Y') }} Aarogya Physiotherapy Center. All rights reserved.
     </div>
 
 </div>

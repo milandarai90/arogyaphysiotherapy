@@ -16,10 +16,10 @@
     $siteSettings = \App\Models\Setting::all()->keyBy('key');
 
     $clinicName = $siteSettings->get('clinic_name')?->value
-        ?: 'Arogya Physiotherapy Center';
+        ?: 'Aarogya Physiotherapy Center';
 
     $clinicShortName = $siteSettings->get('clinic_short_name')?->value
-        ?: 'AROGYA';
+        ?: 'AAROGYA';
 
     $clinicTagline = $siteSettings->get('clinic_tagline')?->value
         ?: 'PHYSIOTHERAPY CENTER';

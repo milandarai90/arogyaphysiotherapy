@@ -376,7 +376,7 @@
                 <input type="text"
                        name="clinic_name"
                        class="form-control @error('clinic_name') is-invalid @enderror"
-                       value="{{ $getSetting('clinic_name', 'Arogya Physiotherapy Center') }}"
+                       value="{{ $getSetting('clinic_name', 'Aarogya Physiotherapy Center') }}"
                        required>
 
                 @error('clinic_name')
@@ -394,9 +394,9 @@
                            name="clinic_short_name"
                            id="clinic_short_name"
                            class="form-control @error('clinic_short_name') is-invalid @enderror"
-                           value="{{ $getSetting('clinic_short_name', 'AROGYA') }}"
+                           value="{{ $getSetting('clinic_short_name', 'AAROGYA') }}"
                            maxlength="100"
-                           placeholder="AROGYA">
+                           placeholder="AAROGYA">
 
                     <small class="text-muted">
                         Displayed as the main clinic name in the navbar.
@@ -638,8 +638,8 @@
                        name="seo_title"
                        class="form-control @error('seo_title') is-invalid @enderror"
                        maxlength="255"
-                       value="{{ $getSetting('seo_title', 'Arogya Physiotherapy Center | Physiotherapy in Bhandara, Nepal') }}"
-                       placeholder="Arogya Physiotherapy Center | Physiotherapy in Bhandara">
+                       value="{{ $getSetting('seo_title', 'Aarogya Physiotherapy Center | Physiotherapy in Bhandara, Nepal') }}"
+                       placeholder="Aarogya Physiotherapy Center | Physiotherapy in Bhandara">
 
                 <small class="text-muted">Recommended: around 50–60 characters.</small>
 
@@ -655,7 +655,7 @@
                           class="form-control @error('seo_description') is-invalid @enderror"
                           rows="4"
                           maxlength="500"
-                          placeholder="Describe your clinic, services and location for search engines.">{{ $getSetting('seo_description', 'Arogya Physiotherapy Center in Bhandara, Nepal, provides professional physiotherapy care, pain management and rehabilitation services.') }}</textarea>
+                          placeholder="Describe your clinic, services and location for search engines.">{{ $getSetting('seo_description', 'Aarogya Physiotherapy Center in Bhandara, Nepal, provides professional physiotherapy care, pain management and rehabilitation services.') }}</textarea>
 
                 <small class="text-muted">Recommended: around 150–160 characters.</small>
 
@@ -994,7 +994,7 @@
                 <label class="form-label fw-semibold">Page Heading</label>
                 <input type="text" name="about_page_title"
                        class="form-control @error('about_page_title') is-invalid @enderror"
-                       value="{{ $getSetting('about_page_title', 'About Arogya Physiotherapy Center') }}">
+                       value="{{ $getSetting('about_page_title', 'About Aarogya Physiotherapy Center') }}">
                 @error('about_page_title')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -1135,7 +1135,7 @@
                 <label class="form-label fw-semibold">Page Heading</label>
                 <input type="text" name="contact_page_title"
                        class="form-control @error('contact_page_title') is-invalid @enderror"
-                       value="{{ $getSetting('contact_page_title', 'Contact Arogya Physiotherapy Center') }}">
+                       value="{{ $getSetting('contact_page_title', 'Contact Aarogya Physiotherapy Center') }}">
                 @error('contact_page_title')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

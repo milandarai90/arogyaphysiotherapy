@@ -1,7 +1,7 @@
 
 @extends('layouts.app')
 
-@section('title', 'Check Appointment Status | Arogya Physiotherapy Center')
+@section('title', 'Check Appointment Status | Aarogya Physiotherapy Center')
 
 @section('content')
 
