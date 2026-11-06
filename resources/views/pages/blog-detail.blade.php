@@ -60,7 +60,7 @@
                         <div>
                             <h6 class="fw-bold mb-1">Need physiotherapy assistance?</h6>
                             <p class="text-muted mb-0">
-                                Contact Arogya Physiotherapy Center for an appointment.
+                                Contact Aarogya Physiotherapy Center for an appointment.
                             </p>
                         </div>
 

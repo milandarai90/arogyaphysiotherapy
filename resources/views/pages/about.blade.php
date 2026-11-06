@@ -9,11 +9,11 @@
     $values = array_filter(array_map('trim', $values));
 @endphp
 
-@section('title', $get('about_page_title', 'About Arogya Physiotherapy Center'))
+@section('title', $get('about_page_title', 'About Aarogya Physiotherapy Center'))
 
 @section('description', $get(
     'about_page_intro',
-    'Learn about Arogya Physiotherapy Center and our commitment to quality physiotherapy care.'
+    'Learn about Aarogya Physiotherapy Center and our commitment to quality physiotherapy care.'
 ))
 
 @section('content')
@@ -26,7 +26,7 @@
         </span>
 
         <h1 class="display-5 fw-bold mt-3">
-            {{ $get('about_page_title', 'About Arogya Physiotherapy Center') }}
+            {{ $get('about_page_title', 'About Aarogya Physiotherapy Center') }}
         </h1>
 
         <p class="lead text-muted mx-auto mt-3" style="max-width:800px;">
@@ -45,7 +45,7 @@
                     <img
                         src="{{ asset('storage/' . $get('about_page_image')) }}"
                         class="img-fluid rounded-4 shadow about-main-image"
-                        alt="Arogya Physiotherapy Center"
+                        alt="Aarogya Physiotherapy Center"
                     >
                 @else
                     <div class="about-image-placeholder rounded-4 d-flex align-items-center justify-content-center">
@@ -64,7 +64,7 @@
                 </h2>
 
                 <p class="text-muted about-content-text">
-                    {{ $get('about_story', 'Arogya Physiotherapy Center is committed to providing quality physiotherapy and rehabilitation services to our community.') }}
+                    {{ $get('about_story', 'Aarogya Physiotherapy Center is committed to providing quality physiotherapy and rehabilitation services to our community.') }}
                 </p>
             </div>
 

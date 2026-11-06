@@ -1,9 +1,9 @@
 
 @extends('layouts.app')
 
-@section('title', 'Physiotherapy Blog | Arogya Physiotherapy Center')
+@section('title', 'Physiotherapy Blog | Aarogya Physiotherapy Center')
 
-@section('description', 'Read physiotherapy tips, rehabilitation advice, pain management guidance and health articles from Arogya Physiotherapy Center in Bhandara, Nepal.')
+@section('description', 'Read physiotherapy tips, rehabilitation advice, pain management guidance and health articles from Aarogya Physiotherapy Center in Bhandara, Nepal.')
 
 @section('content')
 

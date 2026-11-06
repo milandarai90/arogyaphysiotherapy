@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Our Branches | Arogya Physiotherapy Center')
+@section('title', 'Our Branches | Aarogya Physiotherapy Center')
 
 @section('content')
 
 <section class="branches-hero">
     <div class="container text-center">
         <span class="branches-eyebrow">OUR LOCATIONS</span>
-        <h1>Find an Arogya Branch Near You</h1>
+        <h1>Find an Aarogya Branch Near You</h1>
         <p>
             Visit one of our branches and let our physiotherapy team
             help you move better and live healthier.

@@ -1,7 +1,7 @@
 
 @extends('layouts.app')
 
-@section('title', 'Arogya Physiotherapy Center | Bhandara')
+@section('title', 'Aarogya Physiotherapy Center | Bhandara')
 
 @section('content')
 
@@ -40,7 +40,7 @@
         ?: 'Ready to Start Your Recovery Journey?';
 
     $appointmentCtaDescription = $siteSettings->get('appointment_cta_description')?->value
-        ?: 'Book an appointment with Arogya Physiotherapy Center.';
+        ?: 'Book an appointment with Aarogya Physiotherapy Center.';
 
     $appointmentCtaButton = $siteSettings->get('appointment_cta_button')?->value
         ?: 'Book Your Appointment';
@@ -101,7 +101,7 @@
                 </h1>
 
                 <p class="hero-description">
-                    {{ $homepageIntro ?: 'Your journey towards a healthier and pain-free life starts here. Experience personalized physiotherapy and rehabilitation care at Arogya Physiotherapy Center.' }}
+                    {{ $homepageIntro ?: 'Your journey towards a healthier and pain-free life starts here. Experience personalized physiotherapy and rehabilitation care at Aarogya Physiotherapy Center.' }}
                 </p>
 
                 <div class="d-flex flex-wrap gap-3 mt-4">
@@ -224,7 +224,7 @@
 
                     <div class="intro-experience">
                         <i class="fas fa-heart-pulse"></i>
-                        <strong>AROGYA</strong>
+                        <strong>AAROGYA</strong>
                         <small>Movement & Recovery</small>
                     </div>
 
@@ -233,14 +233,14 @@
 
             <div class="col-lg-7">
 
-                <span class="section-label">ABOUT AROGYA</span>
+                <span class="section-label">ABOUT AAROGYA</span>
 
                 <h2 class="section-title">
                     {{ $aboutHeading ?: 'Helping You Get Back to Living Your Best Life' }}
                 </h2>
 
                 <p>
-                    {{ $aboutParagraph1 ?: 'At Arogya Physiotherapy Center, we believe that everyone deserves the opportunity to move freely and live comfortably.' }}
+                    {{ $aboutParagraph1 ?: 'At Aarogya Physiotherapy Center, we believe that everyone deserves the opportunity to move freely and live comfortably.' }}
                 </p>
 
                 <p>

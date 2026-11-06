@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Gallery | Arogya Physiotherapy Center')
-@section('description', 'Explore Arogya Physiotherapy Center in Bhandara, Nepal, including our treatment facilities, physiotherapy equipment, clinic environment and activities.')
+@section('title', 'Gallery | Aarogya Physiotherapy Center')
+@section('description', 'Explore Aarogya Physiotherapy Center in Bhandara, Nepal, including our treatment facilities, physiotherapy equipment, clinic environment and activities.')
 
 @section('content')
 
@@ -12,7 +12,7 @@
             <h1>Our Gallery</h1>
             <p>
                 Explore our physiotherapy center, treatment facilities,
-                equipment, and activities at Arogya Physiotherapy Center.
+                equipment, and activities at Aarogya Physiotherapy Center.
             </p>
         </div>
 

@@ -23,11 +23,11 @@
         : '';
 @endphp
 
-@section('title', $get('contact_page_title', 'Contact Arogya Physiotherapy Center'))
+@section('title', $get('contact_page_title', 'Contact Aarogya Physiotherapy Center'))
 
 @section('description', $get(
     'contact_page_intro',
-    'Contact Arogya Physiotherapy Center in Bhandara, Nepal, for physiotherapy appointments and enquiries.'
+    'Contact Aarogya Physiotherapy Center in Bhandara, Nepal, for physiotherapy appointments and enquiries.'
 ))
 
 @section('content')

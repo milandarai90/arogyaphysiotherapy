@@ -6,7 +6,7 @@
 @endphp
 
 @section('title', $get('services_page_title', 'Our Physiotherapy Services'))
-@section('description', $get('services_page_intro', 'Explore physiotherapy and rehabilitation services at Arogya Physiotherapy Center in Bhandara, Nepal.'))
+@section('description', $get('services_page_intro', 'Explore physiotherapy and rehabilitation services at Aarogya Physiotherapy Center in Bhandara, Nepal.'))
 
 @section('content')
 
@@ -90,7 +90,7 @@
     <div class="container">
         <h2 class="fw-bold">Ready to Start Your Recovery?</h2>
         <p class="mb-4">
-            Book an appointment with Arogya Physiotherapy Center.
+            Book an appointment with Aarogya Physiotherapy Center.
         </p>
 
         <a href="{{ route('appointment.create') }}"
