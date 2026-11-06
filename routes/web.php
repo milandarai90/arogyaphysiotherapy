@@ -71,10 +71,10 @@ Route::get('/', function () {
         ->get();
 
     // Weekly operating hours
-    $operatingHours = \App\Models\OperatingHour::orderByRaw("
-        FIELD(day_of_week, 'Monday', 'Tuesday', 'Wednesday',
-        'Thursday', 'Friday', 'Saturday', 'Sunday')
-    ")->get();
+    $operatingHours = \App\Models\OperatingHour::orderByRaw("CASE day_of_week
+        WHEN 'Monday' THEN 1 WHEN 'Tuesday' THEN 2 WHEN 'Wednesday' THEN 3
+        WHEN 'Thursday' THEN 4 WHEN 'Friday' THEN 5 WHEN 'Saturday' THEN 6
+        WHEN 'Sunday' THEN 7 ELSE 8 END")->get();
 
     // Upcoming holidays
     $upcomingHolidays = \App\Models\Holiday::whereDate(
@@ -135,10 +135,10 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])
 Route::get('/contact', function () {
     $siteSettings = \App\Models\Setting::all()->keyBy('key');
 
-    $operatingHours = \App\Models\OperatingHour::orderByRaw("
-        FIELD(day_of_week, 'Monday', 'Tuesday', 'Wednesday',
-        'Thursday', 'Friday', 'Saturday', 'Sunday')
-    ")->get();
+    $operatingHours = \App\Models\OperatingHour::orderByRaw("CASE day_of_week
+        WHEN 'Monday' THEN 1 WHEN 'Tuesday' THEN 2 WHEN 'Wednesday' THEN 3
+        WHEN 'Thursday' THEN 4 WHEN 'Friday' THEN 5 WHEN 'Saturday' THEN 6
+        WHEN 'Sunday' THEN 7 ELSE 8 END")->get();
 
     $upcomingHolidays = \App\Models\Holiday::whereDate(
         'holiday_date', '>=', today()
@@ -165,6 +165,7 @@ Route::get('/appointment', [AppointmentController::class, 'create'])
     ->name('appointment.create');
 
 Route::post('/appointment', [AppointmentController::class, 'store'])
+    ->middleware('throttle:appointment-submit')
     ->name('appointment.store');
 
 Route::get('/appointment/success/{reference}', [AppointmentController::class, 'success'])
@@ -174,7 +175,7 @@ Route::get('/appointment-status', [AppointmentStatusController::class, 'index'])
     ->name('appointment.status');
 
 Route::post('/appointment-status', [AppointmentStatusController::class, 'check'])
-    ->middleware('throttle:10,1')
+    ->middleware('throttle:appointment-status-check')
     ->name('appointment.status.check');
 /*
 |--------------------------------------------------------------------------
@@ -190,7 +191,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('login');
 
         Route::post('/login', [AuthController::class, 'login'])
-            ->middleware('throttle:5,1')
+            ->middleware('throttle:admin-login')
             ->name('login.submit');
     });
 
@@ -223,6 +224,7 @@ Route::put('/admin/profile', [ProfileController::class, 'update'])
     ->name('admin.profile.update');
 
 Route::put('/admin/profile/password', [ProfileController::class, 'updatePassword'])
+    ->middleware('throttle:admin-password-change')
     ->name('admin.profile.password');
 
 Route::delete('/admin/profile/photo', [ProfileController::class, 'removePhoto'])
@@ -430,7 +432,7 @@ Route::delete('/admin/branches/{branch}', [BranchController::class, 'destroy'])
 Route::get('/appointment-available-slots', [
     \App\Http\Controllers\AppointmentController::class,
     'availableSlots'
-])->name('appointment.available-slots');
+])->middleware('throttle:appointment-slots')->name('appointment.available-slots');
 
 // Public Branch Locations
 Route::get('/branches', function () {

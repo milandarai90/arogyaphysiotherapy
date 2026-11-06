@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 use App\Models\Setting;
 use App\Models\Service;
@@ -18,6 +21,31 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        RateLimiter::for('admin-login', function (Request $request) {
+            $email = strtolower((string) $request->input('email'));
+
+            return [
+                Limit::perMinute(5)->by('login-email:'.$email.'|'.$request->ip()),
+                Limit::perMinute(20)->by('login-ip:'.$request->ip()),
+            ];
+        });
+
+        RateLimiter::for('appointment-submit', fn (Request $request) =>
+            Limit::perMinute(5)->by($request->ip())
+        );
+
+        RateLimiter::for('appointment-slots', fn (Request $request) =>
+            Limit::perMinute(60)->by($request->ip())
+        );
+
+        RateLimiter::for('appointment-status-check', fn (Request $request) =>
+            Limit::perMinute(10)->by($request->ip())
+        );
+
+        RateLimiter::for('admin-password-change', fn (Request $request) =>
+            Limit::perMinute(5)->by((string) $request->user()?->getAuthIdentifier())
+        );
+
         View::composer(['layouts.app', 'pages.home'], function ($view) {
 
             $settings = Setting::all()->keyBy('key');
