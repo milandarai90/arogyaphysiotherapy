@@ -272,9 +272,10 @@
 
         @stack('styles')
     </style>
+    <link rel="stylesheet" href="{{ asset('css/ui-system.css') }}">
 </head>
 
-<body>
+<body class="admin-shell">
 
 {{-- Mobile Sidebar Overlay --}}
 <div class="sidebar-overlay" id="sidebarOverlay"></div>

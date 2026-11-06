@@ -1,0 +1,148 @@
+/* Shared visual rules for the public site and its admin screens. */
+:root {
+    --ui-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --ui-text: #263449;
+    --ui-muted: #68778b;
+    --ui-border: #e2e7ee;
+    --ui-surface: #fff;
+    --ui-radius: 10px;
+    --ui-card-radius: 12px;
+    --ui-shadow: 0 3px 14px rgba(24, 43, 76, .06);
+    --ui-focus: 0 0 0 .2rem rgba(36, 74, 154, .14);
+}
+
+body.site-shell,
+body.admin-shell {
+    color: var(--ui-text);
+    font-family: var(--ui-font);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+body.site-shell :is(h1, h2, h3, h4, h5),
+body.admin-shell :is(h1, h2, h3, h4, h5) {
+    font-family: var(--ui-font);
+    font-weight: 650;
+    letter-spacing: -.02em;
+    line-height: 1.22;
+}
+
+body.site-shell h1 {
+    font-size: clamp(2.15rem, 4.2vw, 3.2rem);
+}
+
+body.site-shell h2 {
+    font-size: clamp(1.65rem, 3vw, 2.2rem);
+}
+
+body.site-shell h3 {
+    font-size: 1.35rem;
+}
+
+body.site-shell h4 {
+    font-size: 1.125rem;
+}
+
+body.site-shell h5 {
+    font-size: 1rem;
+}
+
+body.admin-shell h1 {
+    font-size: 1.75rem;
+}
+
+body.admin-shell h2 {
+    font-size: 1.5rem;
+}
+
+body.admin-shell h3 {
+    font-size: 1.25rem;
+}
+
+body.admin-shell h4 {
+    font-size: 1.125rem;
+}
+
+body.admin-shell h5 {
+    font-size: 1rem;
+}
+
+body.site-shell p,
+body.admin-shell p {
+    font-size: 1rem;
+    line-height: 1.65;
+}
+
+body.site-shell .section-padding {
+    padding-block: 4.5rem;
+}
+
+body.site-shell .section-title {
+    margin-bottom: 2rem;
+}
+
+body.site-shell :is(.card, .service-card, .blog-card, .testimonial-card, .branch-card, .appointment-form-card, .appointment-status-card, .appointment-success-card),
+body.admin-shell :is(.card, .table-card, .stat-card) {
+    border: 1px solid var(--ui-border);
+    border-radius: var(--ui-card-radius);
+    box-shadow: var(--ui-shadow);
+}
+
+body.site-shell :is(.btn, .btn-primary-custom, .btn-outline-custom, .btn-book),
+body.admin-shell .btn {
+    min-height: 42px;
+    padding: .6rem 1rem;
+    border-radius: var(--ui-radius);
+    font-family: var(--ui-font);
+    font-size: .9rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: 0;
+    box-shadow: none;
+}
+
+body.site-shell :is(.form-control, .form-select),
+body.admin-shell :is(.form-control, .form-select) {
+    min-height: 44px;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--ui-radius);
+    color: var(--ui-text);
+    font-family: var(--ui-font);
+    font-size: .95rem;
+    box-shadow: none;
+}
+
+body.site-shell textarea.form-control,
+body.admin-shell textarea.form-control {
+    min-height: 7rem;
+}
+
+body.site-shell :is(.form-control, .form-select):focus,
+body.admin-shell :is(.form-control, .form-select):focus {
+    border-color: var(--primary, #244a9a);
+    box-shadow: var(--ui-focus);
+}
+
+body.site-shell .form-label,
+body.admin-shell .form-label {
+    margin-bottom: .4rem;
+    color: var(--ui-text);
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+body.site-shell :is(.text-muted, small),
+body.admin-shell :is(.text-muted, small) {
+    color: var(--ui-muted) !important;
+}
+
+@media (max-width: 767.98px) {
+    body.site-shell .section-padding {
+        padding-block: 3.25rem;
+    }
+
+    body.site-shell h1 {
+        font-size: clamp(2rem, 8vw, 2.6rem);
+    }
+}
