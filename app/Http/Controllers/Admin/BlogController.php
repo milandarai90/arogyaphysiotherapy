@@ -13,6 +13,11 @@ class BlogController extends Controller
 {
     public function index(Request $request)
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'status' => ['nullable', 'in:published,draft'],
+        ]);
+
         $blogs = Blog::query()
             ->when($request->filled('search'), function ($query) use ($request) {
                 $query->where('title', 'like', '%' . $request->search . '%');
@@ -41,7 +46,7 @@ class BlogController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:200'],
             'excerpt' => ['nullable', 'string', 'max:500'],
-            'content' => ['required', 'string'],
+            'content' => ['required', 'string', 'max:200000'],
             'featured_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'meta_title' => ['nullable', 'string', 'max:200'],
             'meta_description' => ['nullable', 'string', 'max:300'],
@@ -76,7 +81,7 @@ class BlogController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:200'],
             'excerpt' => ['nullable', 'string', 'max:500'],
-            'content' => ['required', 'string'],
+            'content' => ['required', 'string', 'max:200000'],
             'featured_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'meta_title' => ['nullable', 'string', 'max:200'],
             'meta_description' => ['nullable', 'string', 'max:300'],

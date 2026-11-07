@@ -608,7 +608,7 @@
 
                             <img src="{{ asset('storage/' . $settings->get('favicon')->value) }}"
                                  alt="Current favicon"
-                                 class="settings-favicon-preview">
+                                 class="settings-favicon-preview" loading="lazy" decoding="async">
                         </div>
                     @endif
                 </div>
@@ -909,7 +909,7 @@
                         <p class="settings-image-label fw-semibold">Current Hero Image</p>
                         <img src="{{ asset('storage/' . $settings->get('hero_image')->value) }}"
                              alt="Current hero image"
-                             class="settings-image-preview settings-hero-preview">
+                             class="settings-image-preview settings-hero-preview" loading="lazy" decoding="async">
                     </div>
                 @endif
             </div>
@@ -973,7 +973,7 @@
                         <p class="settings-image-label fw-semibold">Current About Image</p>
                         <img src="{{ asset('storage/' . $settings->get('about_image')->value) }}"
                              alt="Current about image"
-                             class="settings-image-preview">
+                             class="settings-image-preview" loading="lazy" decoding="async">
                     </div>
                 @endif
             </div>
@@ -1077,7 +1077,7 @@
                         <p class="settings-image-label fw-semibold">Current About Page Image</p>
                         <img src="{{ asset('storage/' . $settings->get('about_page_image')->value) }}"
                              alt="About page image"
-                             class="settings-image-preview">
+                             class="settings-image-preview" loading="lazy" decoding="async">
                     </div>
                 @endif
             </div>
@@ -1242,7 +1242,7 @@
                         <p class="settings-image-label fw-semibold">Current Why Choose Us Image</p>
                         <img src="{{ asset('storage/' . $settings->get('why_image')->value) }}"
                              alt="Current why choose us image"
-                             class="settings-image-preview">
+                             class="settings-image-preview" loading="lazy" decoding="async">
                     </div>
                 @endif
             </div>

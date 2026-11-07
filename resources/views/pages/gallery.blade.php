@@ -5,6 +5,7 @@
 
 @section('content')
 
+<div class="gallery-page">
 <section class="gallery-section">
     <div class="container">
 
@@ -17,12 +18,10 @@
         </div>
 
         @if($galleries->isEmpty())
-            <div class="gallery-empty">
-                <h5 class="fw-bold mb-2">Gallery Coming Soon</h5>
-                <p class="mb-0">
-                    We're preparing photos of our center and facilities.
-                    Please visit again soon.
-                </p>
+            <div class="content-empty-state gallery-empty">
+                <i class="fas fa-images" aria-hidden="true"></i>
+                <h2>Photos are on the way</h2>
+                <p>We’re preparing photos of our clinic and facilities. Please check back soon.</p>
             </div>
         @else
             <div class="row g-4">
@@ -50,5 +49,6 @@
 
     </div>
 </section>
+</div>
 
 @endsection

@@ -46,7 +46,7 @@
                         src="{{ asset('storage/' . $get('about_page_image')) }}"
                         class="img-fluid rounded-4 shadow about-main-image"
                         alt="Aarogya Physiotherapy Center"
-                    >
+                     loading="lazy" decoding="async">
                 @else
                     <div class="about-image-placeholder rounded-4 d-flex align-items-center justify-content-center">
                         <i class="fas fa-heartbeat fa-5x"></i>
@@ -179,6 +179,7 @@
                                 src="{{ asset('storage/' . $therapist->photo) }}"
                                 alt="{{ $therapist->name }}"
                                 class="w-100 therapist-photo"
+                                loading="lazy" decoding="async"
                             >
                         @else
                             <div class="bg-light d-flex align-items-center justify-content-center therapist-photo-placeholder">

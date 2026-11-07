@@ -329,16 +329,14 @@
 @if($googleMapsEmbedUrl)
     <section class="contact-map-section pb-5">
         <div class="container">
-            <div class="rounded-4 overflow-hidden shadow-sm">
-                <iframe
-                    src="{{ $googleMapsEmbedUrl }}"
-                    width="100%"
-                    height="400"
-                    class="contact-map-iframe"
-                    allowfullscreen
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
+            <div class="rounded-4 overflow-hidden shadow-sm contact-map-placeholder">
+                <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+                <p>Load the clinic map from Google Maps.</p>
+                <button class="btn btn-outline-custom" type="button"
+                        data-map-src="{{ $googleMapsEmbedUrl }}"
+                        data-map-title="Map showing the clinic location">
+                    Load map
+                </button>
             </div>
         </div>
     </section>

@@ -153,7 +153,7 @@ class BranchController extends Controller
             'phone' => ['nullable', 'string', 'max:30'],
             'whatsapp' => ['nullable', 'string', 'max:30'],
             'email' => ['nullable', 'email', 'max:255'],
-            'address' => ['required', 'string'],
+            'address' => ['required', 'string', 'max:500'],
             'city' => ['nullable', 'string', 'max:100'],
             'district' => ['nullable', 'string', 'max:100'],
             'province' => ['nullable', 'string', 'max:100'],
@@ -161,7 +161,7 @@ class BranchController extends Controller
             'google_maps_url' => ['nullable', 'url', 'max:2000'],
             'google_maps_embed_url' => ['nullable', 'url', 'max:2000'],
 
-            'working_days' => ['nullable', 'array'],
+            'working_days' => ['nullable', 'array:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday'],
             'working_days.*.is_closed' => ['nullable', 'boolean'],
             'working_days.*.open' => ['nullable', 'date_format:H:i'],
             'working_days.*.close' => ['nullable', 'date_format:H:i'],
@@ -178,7 +178,7 @@ class BranchController extends Controller
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
 
-        $submittedDays = $request->input('working_days', []);
+        $submittedDays = $validated['working_days'] ?? [];
 
         foreach ($submittedDays as $day => $hours) {
             if (!is_array($hours)) {

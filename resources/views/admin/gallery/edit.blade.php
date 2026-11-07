@@ -22,6 +22,7 @@
                             src="{{ asset('storage/' . $gallery->image_path) }}"
                             alt="{{ $gallery->title }}"
                             style="display:block; max-width:100%; max-height:450px; width:auto; height:auto; object-fit:contain; border-radius:10px;"
+                            loading="lazy" decoding="async"
                         >
                     </div>
                 </div>

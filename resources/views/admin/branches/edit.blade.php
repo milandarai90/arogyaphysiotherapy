@@ -52,7 +52,7 @@
                             <div class="mt-3">
                                 <img src="{{ asset('storage/' . $branch->image) }}"
                                      alt="{{ $branch->name }}"
-                                     style="width: 150px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                     style="width: 150px; height: 100px; object-fit: cover; border-radius: 8px;" loading="lazy" decoding="async">
                             </div>
                         @endif
                     </div>

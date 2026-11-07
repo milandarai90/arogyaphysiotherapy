@@ -194,13 +194,15 @@
                             <div class="branch-map">
 
                                 @if($branch->google_maps_embed_url)
-                                    <iframe
-                                        src="{{ $branch->google_maps_embed_url }}"
-                                        loading="lazy"
-                                        allowfullscreen
-                                        referrerpolicy="no-referrer-when-downgrade"
-                                        title="Map showing {{ $branch->name }}"
-                                    ></iframe>
+                                    <div class="branch-map-placeholder">
+                                        <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+                                        <p>Load the map from Google Maps for this branch.</p>
+                                        <button class="btn btn-outline-custom" type="button"
+                                                data-map-src="{{ $branch->google_maps_embed_url }}"
+                                                data-map-title="Map showing {{ $branch->name }}">
+                                            Load map
+                                        </button>
+                                    </div>
                                 @else
                                     <div class="branch-map-unavailable">
                                         <i class="fa-solid fa-map-location-dot"></i>

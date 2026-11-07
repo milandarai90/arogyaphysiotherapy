@@ -11,7 +11,7 @@
     <div class="container">
 
         <div class="text-center mb-5">
-            <span class="text-primary fw-semibold">HEALTH & WELLNESS</span>
+            <span class="section-label">HEALTH &amp; WELLNESS</span>
 
             <h1 class="fw-bold mt-2">Our Blog</h1>
 
@@ -84,14 +84,11 @@
 
         @else
 
-            <div class="text-center py-5">
-                <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
-
-                <h4>No articles available yet</h4>
-
-                <p class="text-muted">
-                    We're preparing helpful health and physiotherapy articles. Please visit again soon.
-                </p>
+            <div class="content-empty-state">
+                <i class="fas fa-newspaper" aria-hidden="true"></i>
+                <h2>No articles published yet</h2>
+                <p>We’re preparing practical health and physiotherapy articles. In the meantime, explore the services we offer.</p>
+                <a href="{{ route('services') }}" class="btn btn-outline-custom">Explore our services</a>
             </div>
 
         @endif

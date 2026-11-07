@@ -134,7 +134,7 @@
                                          alt="{{ $therapist->name }}"
                                          width="120" height="120"
                                          class="rounded-3"
-                                         style="object-fit:cover;">
+                                         style="object-fit:cover;" loading="lazy" decoding="async">
                                 </div>
                             @endif
 

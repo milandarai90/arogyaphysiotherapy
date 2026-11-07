@@ -38,6 +38,7 @@
                                 alt="Profile Picture"
                                 class="rounded-circle border"
                                 style="width:120px;height:120px;object-fit:cover;"
+                                loading="lazy" decoding="async"
                             >
                         @else
                             <div
@@ -54,7 +55,7 @@
                                 alt="Profile Picture Preview"
                                 class="rounded-circle border d-none"
                                 style="width:120px;height:120px;object-fit:cover;"
-                            >
+                             loading="lazy" decoding="async">
                         @endif
 
                         <div class="mt-3">

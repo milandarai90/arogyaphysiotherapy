@@ -9,6 +9,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CookieConsentController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\AppointmentStatusController;
 use App\Http\Controllers\Admin\AuthController;
@@ -150,6 +151,19 @@ Route::get('/contact', function () {
         'upcomingHolidays'
     ));
 })->name('contact');
+
+Route::view('/privacy-policy', 'pages.legal.privacy')
+    ->name('privacy-policy');
+
+Route::view('/terms-and-conditions', 'pages.legal.terms')
+    ->name('terms-and-conditions');
+
+Route::view('/cookie-policy', 'pages.legal.cookies')
+    ->name('cookie-policy');
+
+Route::post('/cookie-consent', [CookieConsentController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('cookie-consent.store');
 
 Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:5,1')

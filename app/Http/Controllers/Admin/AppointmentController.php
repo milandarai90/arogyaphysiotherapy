@@ -16,6 +16,11 @@ class AppointmentController extends Controller
 {
     public function index(Request $request)
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'status' => ['nullable', 'in:pending,approved,rejected,rescheduled,completed,cancelled'],
+        ]);
+
         $query = Appointment::with(['service', 'branch'])->latest();
 
         if ($request->filled('search')) {

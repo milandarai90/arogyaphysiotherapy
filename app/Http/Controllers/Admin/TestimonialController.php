@@ -11,6 +11,11 @@ class TestimonialController extends Controller
 {
     public function index(Request $request)
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'status' => ['nullable', 'in:active,inactive'],
+        ]);
+
         $query = Testimonial::query();
 
         if ($request->filled('search')) {

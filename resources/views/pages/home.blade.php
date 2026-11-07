@@ -86,11 +86,6 @@
 
             <div class="col-lg-6">
 
-                <span class="hero-label">
-                    <i class="fas fa-heart-pulse me-2"></i>
-                    YOUR HEALTH, OUR PRIORITY
-                </span>
-
                 <h1>
                     @if($homepageHeading)
                         {{ $homepageHeading }}
@@ -104,7 +99,7 @@
                     {{ $homepageIntro ?: 'Your journey towards a healthier and pain-free life starts here. Experience personalized physiotherapy and rehabilitation care at Aarogya Physiotherapy Center.' }}
                 </p>
 
-                <div class="d-flex flex-wrap gap-3 mt-4">
+                <div class="hero-actions d-flex flex-wrap gap-3 mt-4">
 
                     <a href="{{ route('appointment.create') }}"
                        class="btn btn-primary-custom">
@@ -119,8 +114,9 @@
                     </a>
 
                     <a href="{{ route('services') }}"
-                       class="btn btn-outline-custom">
+                       class="hero-tertiary-link">
                         Explore Services
+                        <i class="fas fa-arrow-right ms-2" aria-hidden="true"></i>
                     </a>
 
                 </div>
@@ -150,7 +146,12 @@
                     <img
                         src="{{ $heroImage }}"
                         alt="Healthcare professional providing patient care"
-                        class="hero-image">
+                        class="hero-image"
+                        width="1000"
+                        height="440"
+                        loading="eager"
+                        fetchpriority="high"
+                        decoding="async">
 
                     <div class="hero-floating-card">
                         <div class="floating-icon">
@@ -220,7 +221,7 @@
                     <img
                         src="{{ $aboutImage }}"
                         alt="Physiotherapy and healthcare"
-                        class="intro-image">
+                        class="intro-image" loading="lazy" decoding="async">
 
                     <div class="intro-experience">
                         <i class="fas fa-heart-pulse"></i>
@@ -307,14 +308,13 @@
 
             @empty
 
-                <div class="col-12 text-center py-5">
-                    <i class="fas fa-heart-pulse fa-3x mb-3 text-muted"></i>
-
-                    <h5>No Services Available</h5>
-
-                    <p class="text-muted">
-                        Our services will be displayed here soon.
-                    </p>
+                <div class="col-12">
+                    <div class="content-empty-state">
+                        <i class="fas fa-heart-pulse" aria-hidden="true"></i>
+                        <h3>Services are being updated</h3>
+                        <p>Contact the clinic and we’ll help you find the right next step.</p>
+                        <a href="{{ route('contact') }}" class="btn btn-outline-custom">Contact the clinic</a>
+                    </div>
                 </div>
 
             @endforelse
@@ -405,7 +405,7 @@
                 <img
                     src="{{ $whyImage }}"
                     alt="Physiotherapy rehabilitation session"
-                    class="why-image">
+                    class="why-image" loading="lazy" decoding="async">
             </div>
 
         </div>
@@ -554,11 +554,18 @@
                             src="{{ asset('storage/' . $image->image_path) }}"
                             class="gallery-image"
                             alt="{{ $image->title }}"
-                            loading="lazy">
+                            loading="lazy"
+                            decoding="async">
 
-                        @if($image->title)
-                            <div class="gallery-caption">
-                                {{ $image->title }}
+                        @if($image->title || $image->description)
+                            <div class="gallery-card-body">
+                                @if($image->title)
+                                    <h5>{{ $image->title }}</h5>
+                                @endif
+
+                                @if($image->description)
+                                    <p>{{ \Illuminate\Support\Str::limit($image->description, 140) }}</p>
+                                @endif
                             </div>
                         @endif
 
@@ -568,26 +575,26 @@
 
             @empty
 
-                <div class="col-12 text-center py-5">
-                    <i class="fas fa-images fa-3x text-muted mb-3"></i>
-
-                    <h5>No Gallery Images Available</h5>
-
-                    <p class="text-muted">
-                        Our clinic photos will be displayed here soon.
-                    </p>
+                <div class="col-12">
+                    <div class="content-empty-state">
+                        <i class="fas fa-images" aria-hidden="true"></i>
+                        <h3>Clinic photos are on the way</h3>
+                        <p>We’re preparing a look inside our clinic and facilities.</p>
+                    </div>
                 </div>
 
             @endforelse
 
         </div>
 
+        @if($homeGallery->isNotEmpty())
         <div class="text-center mt-4">
             <a href="{{ route('gallery') }}"
                class="btn btn-outline-custom">
                 Explore Full Gallery
             </a>
         </div>
+        @endif
 
     </div>
 </section>
@@ -712,7 +719,8 @@
                                 <img
                                     src="{{ asset('storage/'.$testimonial->photo) }}"
                                     alt="{{ $testimonial->patient_name }}"
-                                    class="testimonial-photo">
+                                    class="testimonial-photo"
+                                    loading="lazy" decoding="async">
                             @else
                                 <div class="testimonial-avatar">
                                     <i class="fas fa-user text-secondary"></i>
@@ -780,7 +788,7 @@
 
                             <img
                                 src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=700&q=80"
-                                alt="Physiotherapy and healthcare">
+                                alt="Physiotherapy and healthcare" loading="lazy" decoding="async">
 
                         @endif
 
@@ -811,28 +819,27 @@
 
             @empty
 
-                <div class="col-12 text-center py-5">
-
-                    <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
-
-                    <h5>No Articles Published Yet</h5>
-
-                    <p class="text-muted">
-                        Our health and wellness articles will appear here soon.
-                    </p>
-
+                <div class="col-12">
+                    <div class="content-empty-state">
+                        <i class="fas fa-newspaper" aria-hidden="true"></i>
+                        <h3>New articles are on the way</h3>
+                        <p>Our health and wellness articles will appear here as they’re published.</p>
+                        <a href="{{ route('services') }}" class="btn btn-outline-custom">Explore our services</a>
+                    </div>
                 </div>
 
             @endforelse
 
         </div>
 
+        @if($homeBlogs->isNotEmpty())
         <div class="text-center mt-5">
             <a href="{{ route('blog') }}"
                class="btn btn-outline-custom">
                 View All Articles
             </a>
         </div>
+        @endif
 
     </div>
 </section>

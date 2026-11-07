@@ -47,6 +47,7 @@
                             src="{{ asset('storage/' . $blog->featured_image) }}"
                             alt="{{ $blog->title }}"
                             class="article-featured-image mb-4"
+                            loading="lazy" decoding="async"
                         >
                     @endif
 
@@ -89,6 +90,7 @@
                                         src="{{ asset('storage/' . $related->featured_image) }}"
                                         alt="{{ $related->title }}"
                                         class="related-blog-image"
+                                        loading="lazy" decoding="async"
                                     >
                                 @endif
 

@@ -422,6 +422,7 @@
                         alt="Profile"
                         class="rounded-circle"
                         style="width:36px;height:36px;object-fit:cover;"
+                        loading="lazy" decoding="async"
                     >
                 @else
                     <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center"

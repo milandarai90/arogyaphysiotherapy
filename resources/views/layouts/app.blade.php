@@ -139,7 +139,7 @@
     <title>@yield('title', $seoTitle)</title>
 
     <meta name="description" content="@yield('description', $seoDescription)">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="@yield('robots', 'index, follow')">
 
     {{-- Favicon --}}
     <link rel="icon" href="{{ $faviconUrl }}">
@@ -159,6 +159,8 @@
     <meta name="twitter:image" content="@yield('og_image', $logoUrl)">
 
     {{-- Bootstrap --}}
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
@@ -464,7 +466,9 @@
     <link rel="stylesheet" href="{{ asset('css/ui-system.css') }}">
 </head>
 
-<body class="site-shell">
+<body class="site-shell {{ request()->routeIs('appointment.create') ? 'appointment-form-page' : '' }}">
+
+    <a class="skip-link" href="#main-content">Skip to content</a>
 
     {{-- Top Contact Bar --}}
     <div class="top-bar">
@@ -513,7 +517,7 @@
     </div>
 
     {{-- Main Navbar --}}
-    <nav class="navbar navbar-expand-lg main-navbar sticky-top">
+    <nav class="navbar navbar-expand-xxl main-navbar sticky-top" aria-label="Main navigation">
         <div class="container">
 
             <a class="navbar-brand
@@ -620,7 +624,7 @@
     </nav>
 
     {{-- Main Content --}}
-    <main>
+    <main id="main-content" tabindex="-1">
         @yield('content')
     </main>
 
@@ -660,7 +664,9 @@
 
                     <div class="footer-brand d-flex align-items-center gap-2 mb-3">
                         <img src="{{ $logoUrl }}"
-                             alt="{{ $clinicName }} Logo">
+                             alt="{{ $clinicName }} Logo"
+                             loading="lazy"
+                             decoding="async">
 
                         <div>
                             <h5>{{ $clinicName }}</h5>
@@ -707,6 +713,9 @@
                         <li><a href="{{ route('gallery') }}">Gallery</a></li>
                         <li><a href="{{ route('blog') }}">Blog</a></li>
                         <li><a href="{{ route('contact') }}">Contact</a></li>
+                        <li><a href="{{ route('privacy-policy') }}">Privacy Policy</a></li>
+                        <li><a href="{{ route('terms-and-conditions') }}">Terms &amp; Conditions</a></li>
+                        <li><a href="{{ route('cookie-policy') }}">Cookie Policy</a></li>
                     </ul>
 
                 </div>
@@ -774,19 +783,17 @@
 
             <hr>
 
-            <hr>
-
 <div class="footer-bottom d-flex flex-column
             flex-md-row justify-content-between align-items-center gap-3">
 
     <p class="mb-0">
-        © {{ date('Y') }} {{ $clinicName }}.
+        &copy; {{ date('Y') }} {{ $clinicName }}.
         All Rights Reserved.
     </p>
 
     <p class="mb-0">
         <i class="fas fa-eye me-1"></i>
-        Website Visitors:
+        Recorded visits (optional analytics):
         <strong>{{ number_format($publicTotalVisits ?? 0) }}</strong>
     </p>
 
@@ -806,6 +813,36 @@
         </div>
     </footer>
 
+    <button class="cookie-settings-button" type="button" id="cookie-settings-button">
+        Cookie preferences
+    </button>
+
+    <section class="cookie-consent-banner" id="cookie-consent-banner"
+             aria-labelledby="cookie-consent-title"
+             aria-describedby="cookie-consent-description"
+             @if(request()->cookie('cookie_consent')) hidden @endif>
+        <div class="cookie-consent-copy">
+            <h2 id="cookie-consent-title">Your privacy choices</h2>
+            <p id="cookie-consent-description">
+                Essential cookies support forms and secure sign-in. If you agree, an optional cookie helps us count
+                page visits. Your choice does not affect appointment requests or messages to the clinic.
+                <a href="{{ route('cookie-policy') }}">Read our cookie policy</a>.
+            </p>
+        </div>
+        <div class="cookie-consent-actions">
+            <form method="POST" action="{{ route('cookie-consent.store') }}">
+                @csrf
+                <input type="hidden" name="choice" value="rejected">
+                <button type="submit" class="btn btn-outline-custom">Reject optional</button>
+            </form>
+            <form method="POST" action="{{ route('cookie-consent.store') }}">
+                @csrf
+                <input type="hidden" name="choice" value="accepted">
+                <button type="submit" class="btn btn-primary-custom">Accept optional</button>
+            </form>
+        </div>
+    </section>
+
     {{-- Floating Appointment Button --}}
     <a href="{{ route('appointment.create') }}"
        class="floating-book"
@@ -816,6 +853,28 @@
 
     {{-- Bootstrap JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('click', function (event) {
+            const button = event.target.closest('[data-map-src]');
+            if (!button) return;
+
+            const map = document.createElement('iframe');
+            map.src = button.dataset.mapSrc;
+            map.title = button.dataset.mapTitle || 'Google Maps';
+            map.loading = 'lazy';
+            map.referrerPolicy = 'no-referrer-when-downgrade';
+            map.allowFullscreen = true;
+            map.className = button.closest('.branch-map') ? '' : 'contact-map-iframe';
+            button.closest('.branch-map-placeholder, .contact-map-placeholder').replaceWith(map);
+        });
+
+        document.getElementById('cookie-settings-button')?.addEventListener('click', function () {
+            const banner = document.getElementById('cookie-consent-banner');
+            banner.hidden = false;
+            banner.querySelector('button[type="submit"]')?.focus();
+        });
+    </script>
 
     @stack('scripts')
 

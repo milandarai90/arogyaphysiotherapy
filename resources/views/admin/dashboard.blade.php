@@ -70,7 +70,7 @@
     {{-- Website Visitor Statistics --}}
     <div class="mb-3">
         <h5 class="fw-bold mb-1">Website Analytics</h5>
-        <p class="text-muted small mb-0">Visitor activity across your public website.</p>
+        <p class="text-muted small mb-0">Visit statistics include browsers that accepted optional cookies. They do not include every site visitor.</p>
     </div>
 
     <div class="row g-3 mb-4">
@@ -79,9 +79,9 @@
             <div class="card stat-card">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
-                        <p class="text-muted mb-1">Total Page Visits</p>
+                        <p class="text-muted mb-1">Recorded Page Visits</p>
                         <h3 class="fw-bold mb-0">{{ number_format($totalVisits) }}</h3>
-                        <small class="text-muted">All-time visits</small>
+                        <small class="text-muted">From consenting browsers</small>
                     </div>
                     <div class="stat-icon bg-primary-subtle text-primary">
                         <i class="fa-solid fa-eye"></i>

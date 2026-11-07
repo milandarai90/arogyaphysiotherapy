@@ -30,12 +30,11 @@
     <div class="container">
 
         @if($services->isEmpty())
-            <div class="text-center py-5">
-                <i class="fas fa-hand-holding-medical fa-3x mb-3 services-icon"></i>
-                <h3 class="fw-bold">Services Coming Soon</h3>
-                <p class="text-muted">
-                    Please contact us to learn more about our services.
-                </p>
+            <div class="content-empty-state">
+                <i class="fas fa-hand-holding-medical" aria-hidden="true"></i>
+                <h2>Our service list is being updated</h2>
+                <p>Contact the clinic and we’ll answer your questions about treatment options.</p>
+                <a href="{{ route('contact') }}" class="btn btn-outline-custom">Contact the clinic</a>
             </div>
         @else
             <div class="row g-4">

@@ -20,6 +20,16 @@ class TrackWebsiteVisits
             return $next($request);
         }
 
+        if ($request->cookie('cookie_consent') !== 'accepted') {
+            View::share('publicTotalVisits', Cache::remember(
+                'website_total_visits',
+                now()->addMinutes(5),
+                fn () => WebsiteVisit::count()
+            ));
+
+            return $next($request);
+        }
+
         $visitorToken = $request->cookie(self::COOKIE_NAME);
 
         if (!$visitorToken || !Str::isUuid($visitorToken)) {

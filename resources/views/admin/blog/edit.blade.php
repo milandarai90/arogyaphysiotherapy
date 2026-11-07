@@ -66,7 +66,7 @@
                         <div class="mb-3">
                             <img src="{{ asset('storage/' . $blog->featured_image) }}"
                                  alt="{{ $blog->title }}"
-                                 style="max-width:250px;max-height:160px;object-fit:contain;border-radius:8px;">
+                                 style="max-width:250px;max-height:160px;object-fit:contain;border-radius:8px;" loading="lazy" decoding="async">
                             <div class="small text-muted mt-1">Current featured image</div>
                         </div>
                     @endif

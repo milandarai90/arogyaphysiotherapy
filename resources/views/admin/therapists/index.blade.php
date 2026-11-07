@@ -97,7 +97,7 @@
                                          alt="{{ $therapist->name }}"
                                          width="55" height="55"
                                          class="rounded-circle"
-                                         style="object-fit:cover;">
+                                         style="object-fit:cover;" loading="lazy" decoding="async">
                                 @else
                                     <div class="rounded-circle bg-light d-flex align-items-center justify-content-center"
                                          style="width:55px;height:55px;flex-shrink:0;">

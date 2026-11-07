@@ -2,6 +2,7 @@
 @extends('layouts.app')
 
 @section('title', 'Check Appointment Status | Aarogya Physiotherapy Center')
+@section('robots', 'noindex, nofollow')
 
 @section('content')
 

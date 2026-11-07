@@ -12,6 +12,11 @@ class TherapistController extends Controller
 {
     public function index(Request $request)
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'status' => ['nullable', 'in:active,inactive'],
+        ]);
+
         $query = Therapist::query();
 
         if ($request->filled('search')) {

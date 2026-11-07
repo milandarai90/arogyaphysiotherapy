@@ -93,6 +93,7 @@
                                                     src="{{ asset('storage/' . $blog->featured_image) }}"
                                                     alt="{{ $blog->title }}"
                                                     style="width:65px;height:55px;object-fit:cover;border-radius:8px;"
+                                                    loading="lazy" decoding="async"
                                                 >
                                             @else
                                                 <div class="bg-light rounded d-flex align-items-center justify-content-center"

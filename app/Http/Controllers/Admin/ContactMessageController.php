@@ -10,6 +10,11 @@ class ContactMessageController extends Controller
 {
     public function index(Request $request)
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'status' => ['nullable', 'in:new,read,replied'],
+        ]);
+
         $query = ContactMessage::query();
 
         if ($request->filled('search')) {

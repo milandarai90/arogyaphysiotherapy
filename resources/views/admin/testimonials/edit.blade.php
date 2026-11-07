@@ -99,7 +99,7 @@
                                          alt="{{ $testimonial->patient_name }}"
                                          width="110" height="110"
                                          class="rounded-circle"
-                                         style="object-fit:cover;">
+                                         style="object-fit:cover;" loading="lazy" decoding="async">
                                 </div>
                             @endif
 
